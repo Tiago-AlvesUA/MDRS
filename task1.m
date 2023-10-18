@@ -1,8 +1,10 @@
 clc;
 clear all;
+%% 1.a)
+fprintf('A)\n');
 
 Num = 20;
-P = 10000;
+P = 5000;
 alfa = 0.1;
 rate = 1800;
 f = 1000000;
@@ -19,17 +21,17 @@ for i = 1:4
     mAPD(i,1) = mean(APD(i,:));
     term(i,1) = norminv(1-alfa/2) * sqrt(var(APD(i,:)) / Num);
 end
-fprintf('APD C10 (%%) = %.2e +- %.2e\n',mAPD(1,1),term(1,1));
-fprintf('APD C20 (%%) = %.2e +- %.2e\n',mAPD(2,1),term(2,1));
-fprintf('APD C30 (%%) = %.2e +- %.2e\n',mAPD(3,1),term(3,1));
-fprintf('APD C40 (%%) = %.2e +- %.2e\n',mAPD(4,1),term(4,1));
+% fprintf('APD C10 (%%) = %.2e +- %.2e\n',mAPD(1,1),term(1,1));
+% fprintf('APD C20 (%%) = %.2e +- %.2e\n',mAPD(2,1),term(2,1));
+% fprintf('APD C30 (%%) = %.2e +- %.2e\n',mAPD(3,1),term(3,1));
+% fprintf('APD C40 (%%) = %.2e +- %.2e\n',mAPD(4,1),term(4,1));
 
 figure(1);
 bar(C, mAPD);
-hold on
+hold on;
 
 er = errorbar(C, mAPD, term);
-er.Color = [255 255 0];
+er.Color = [1 0 0];
 er.LineStyle = 'none';
 
 hold off;
