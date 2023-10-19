@@ -1,6 +1,6 @@
 clc;
 clear all;
-%% 1.a)
+%% 1.a
 fprintf('A)\n');
 
 Num = 20;
@@ -81,7 +81,7 @@ for i = 1:4
     fprintf('Theoretical value APD C%d Mbps (ms) = %.2e\n',C(i)/10^6,APD(i)*1000);
 end
 
-%% 1.c) 
+%% 1.c
 fprintf('\nC)\n');
 
 C = 10;
