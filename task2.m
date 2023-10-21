@@ -33,12 +33,10 @@ for i = 1:4
     term_APD_voip(i,1) = norminv(1-alfa/2) * sqrt(var(APD_v(i,:)) / N);
 
     % calculo do average queuing delay of VoIP packets
-end
 
-fprintf('APD nVoip = 10 = %.2e +- %.2e\n',mean_APD_data(1,1),term_APD_data(1,1));
-fprintf('APD nVoip = 20 = %.2e +- %.2e\n',mean_APD_data(2,1),term_APD_data(2,1));
-fprintf('APD nVoip = 30 = %.2e +- %.2e\n',mean_APD_voip(3,1),term_APD_voip(3,1));
-fprintf('APD nVoip = 40 = %.2e +- %.2e\n',mean_APD_voip(4,1),term_APD_voip(4,1));
+    fprintf('APD data n%d Mbps (ms) = %.2e +- %.2e\n',n(i),mean_APD_data(i,1),term_APD_data(i,1));
+    fprintf('APD voip n%d Mbps (ms) = %.2e +- %.2e\n',n(i),mean_APD_voip(i,1),term_APD_voip(i,1));
+end
 %%%
 figure(1);
 bar(n, mean_APD_data);
