@@ -87,7 +87,6 @@ fprintf('\nC)\n');
 
 C = 10;
 rates = [1000 1300 1600 1900];
-
 TT = zeros(4, Num);
 mean_Throughput = zeros(4, 1);
 term_Throughput = zeros(4, 1);
@@ -103,12 +102,14 @@ for i = 1:4
     mean_APD(i,1) = mean(APD(i,:));
     term_APD(i,1) = norminv(1-alfa/2) * sqrt(var(APD(i,:)) / Num);
     
-    % Display results for average packet delay and throughput
-    fprintf('Average Packet Delay (rate = %d pps) = %.2f ms +- %.2f\n', rates(i), mean_APD(i), term_APD(i));
-    fprintf('Average Throughput (rate = %d pps) = %.2f Mbps +- %.2f\n', rates(i), mean_Throughput(i), term_Throughput(i));
+    % Display results for average packet delay
+    fprintf('Average Packet Delay (ms) (rate = %d pps) = %.2e +- %.2e\n', rates(i), mean_APD(i), term_APD(i));
     
-    mean_Throughput(i,1) = rates(i) * mean(TT(i,:)); % tenho duvida se aqui multiplicamos por capacidade em bits
-    term_APD(i,1) = norminv(1-alfa/2) * sqrt(var(TT(i,:)) / Num);
+    mean_Throughput(i,1) = mean(TT(i,:));
+    term_Throughput(i,1) = norminv(1-alfa/2) * sqrt(var(TT(i,:)) / Num);
+
+    % Display results for average throughput
+    fprintf('Average Throughput (Mbps) (rate = %d pps) = %.2e +- %.2e\n', rates(i), mean_Throughput(i), term_Throughput(i));
 end
 
 % Create figures
@@ -142,8 +143,8 @@ b = 10^-5;
 C = 10;
 rates = [1000 1300 1600 1900];
 TT = zeros(4, Num);
-mean_Throughput = zeros(length(rates), 1);
-term_Throughput = zeros(length(rates), 1);
+mean_Throughput = zeros(4, 1);
+term_Throughput = zeros(4, 1);
 APD = zeros(4, Num);
 mean_APD = zeros(4, 1);
 term_APD = zeros(4, 1);
@@ -155,9 +156,14 @@ for i = 1:4
 
     mean_APD(i,1) = mean(APD(i,:));
     term_APD(i,1) = norminv(1-alfa/2) * sqrt(var(APD(i,:)) / Num);
+    
+    % Display results for average packet delay
+    fprintf('Average Packet Delay (ms) (rate = %d pps) = %.2e +- %.2e\n', rates(i), mean_APD(i), term_APD(i));
 
-    mean_Throughput(i,1) = rates(i) * mean(TT(i,:)); % tenho duvida se aqui multiplicamos por capacidade em bits
-    term_APD(i,1) = norminv(1-alfa/2) * sqrt(var(TT(i,:)) / Num);
+    mean_Throughput(i,1) = mean(TT(i,:));
+    term_Throughput(i,1) = norminv(1-alfa/2) * sqrt(var(TT(i,:)) / Num);
+    % Display results for average throughput
+    fprintf('Average Throughput (Mbps) (rate = %d pps) = %.2e +- %.2e\n', rates(i), mean_Throughput(i), term_Throughput(i));
 end
 
 % Create figures
@@ -170,7 +176,7 @@ er_APD.LineStyle = 'none';
 hold off;
 xlabel('Packet Arrival Rate (pps)');
 ylabel('Average Packet Delay (ms)');
-title('Average Packet Delay with Error Bars');
+title('Average Packet Delay with Error Bars (BER)');
 
 figure(5);
 bar(rates, mean_Throughput);
@@ -181,12 +187,8 @@ er_Throughput.LineStyle = 'none';
 hold off;
 xlabel('Packet Arrival Rate (pps)');
 ylabel('Average Throughput (Mbps)');
-title('Average Throughput with Error Bars');
+title('Average Throughput with Error Bars (BER)');
 
-% Display results for average packet delay and throughput
-for r = 1:length(rates)
-    fprintf('Average Packet Delay (rate = %d pps) = %.2f ms +- %.2f\n', rates(r), mean_APD(r), term_APD(r));
-    fprintf('Average Throughput (rate = %d pps) = %.2f Mbps +- %.2f\n', rates(r), mean_Throughput(r), term_Throughput(r));
-end
 
-% Compandado com BER temos ligeiramente menos rendimento media e legeiramente mais atraso
+% Comparando com BER temos ligeiramente menos throughput e ligeiramente mais atraso
+% Ver o PORQUE destas cenas
