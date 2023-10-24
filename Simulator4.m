@@ -1,4 +1,4 @@
-function [PLd, PLv , APDd , APDv , MPDd, MPDv , TT] = Simulator4(lambda,C,f,P,n)
+function [PLd, PLv, APDd, APDv, AQDd, AQDv, MPDd, MPDv, TT] = Simulator4(lambda,C,f,P,n)
 
 % INPUT PARAMETERS:
 %  lambda - packet rate (packets/sec)
@@ -36,6 +36,10 @@ TRANSMITTEDBYTESD= 0;   % Sum of the Bytes of transmitted packets
 TRANSMITTEDBYTESV=0;
 DELAYSD= 0;             % Sum of the delays of transmitted packets
 DELAYSV=0;
+
+QUEUEDELAYSD = 0;
+QUEUEDELAYSV = 0;
+
 MAXDELAYD= 0;           % Maximum delay among all transmitted packets
 MAXDELAYV=0;
 % Initializing the simulation clock:
@@ -114,6 +118,13 @@ while (TRANSMITTEDPACKETSD+TRANSMITTEDPACKETSV) < P               % Stopping cri
             QUEUE = sortrows(QUEUE,3,"descend");    
             Event_List = [Event_List; DEPARTURE, Clock + 8*QUEUE(1,1)/(C*10^6), QUEUE(1,1), QUEUE(1,2), QUEUE(1,3)];
             QUEUEOCCUPATION= QUEUEOCCUPATION - QUEUE(1,1);
+
+            if QUEUE(1,3) == DATA
+                QUEUEDELAYSD = QUEUEDELAYSD + (Clock - QUEUE(1,2));
+            elseif QUEUE(1,3) == VOIP
+                QUEUEDELAYSV = QUEUEDELAYSV + (Clock - QUEUE(1,2));
+            end
+
             QUEUE(1,:)= [];
         else
             STATE= 0;
@@ -128,6 +139,8 @@ APDd = 1000*DELAYSD/TRANSMITTEDPACKETSD;                     % in milliseconds
 APDv = 1000*DELAYSV/TRANSMITTEDPACKETSV;                     % in milliseconds
 MPDd = 1000*MAXDELAYD;                                       % in milliseconds
 MPDv = 1000*MAXDELAYV;                                       % in milliseconds
+AQDd = 1000 * QUEUEDELAYSD / TRANSMITTEDPACKETSD;
+AQDv = 1000 * QUEUEDELAYSV / TRANSMITTEDPACKETSV;
 TT = 10^(-6)*(TRANSMITTEDBYTESD+TRANSMITTEDBYTESV)*8/Clock;  % in Mbps
 
 end
