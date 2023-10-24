@@ -1,4 +1,4 @@
-function [PLd, PLv , APDd , APDv , MPDd, MPDv , TT] = Simulator3(lambda,C,f,P,n)
+function [PLd, PLv , APDd , APDv , AQDd, AQDv, MPDd, MPDv, TT] = Simulator3(lambda,C,f,P,n)
 % INPUT PARAMETERS:
 %  lambda - packet rate (packets/sec)
 %  C      - link bandwidth (Mbps)
@@ -10,7 +10,6 @@ function [PLd, PLv , APDd , APDv , MPDd, MPDv , TT] = Simulator3(lambda,C,f,P,n)
 %  APD  - average packet delay (milliseconds)
 %  MPD  - maximum packet delay (milliseconds)
 %  TT   - transmitted throughput (Mbps)
-
 %Events:
 ARRIVAL= 0;       % Arrival of a packet            
 DEPARTURE= 1;     % Departure of a packet
@@ -35,6 +34,10 @@ TRANSMITTEDBYTESD= 0;   % Sum of the Bytes of transmitted packets
 TRANSMITTEDBYTESV=0;
 DELAYSD= 0;             % Sum of the delays of transmitted packets
 DELAYSV=0;
+
+QUEUEDELAYSD = 0;
+QUEUEDELAYSV = 0;
+
 MAXDELAYD= 0;           % Maximum delay among all transmitted packets
 MAXDELAYV=0;
 % Initializing the simulation clock:
@@ -72,7 +75,7 @@ while (TRANSMITTEDPACKETSD+TRANSMITTEDPACKETSV) < P               % Stopping cri
                     QUEUEOCCUPATION= QUEUEOCCUPATION + Packet_Size;
                 else
                     LOSTPACKETSD= LOSTPACKETSD + 1;
-                end
+                end           
             end
         else
             TOTALPACKETSV= TOTALPACKETSV+1;
@@ -98,7 +101,7 @@ while (TRANSMITTEDPACKETSD+TRANSMITTEDPACKETSV) < P               % Stopping cri
                 MAXDELAYD= Clock - Arrival_Instant;
             end
             TRANSMITTEDPACKETSD= TRANSMITTEDPACKETSD + 1;
-        else    
+        else
             TRANSMITTEDBYTESV= TRANSMITTEDBYTESV + Packet_Size;
             DELAYSV= DELAYSV + (Clock - Arrival_Instant);
             if Clock - Arrival_Instant > MAXDELAYV
@@ -107,10 +110,21 @@ while (TRANSMITTEDPACKETSD+TRANSMITTEDPACKETSV) < P               % Stopping cri
             TRANSMITTEDPACKETSV= TRANSMITTEDPACKETSV + 1;
         end
 
-        if QUEUEOCCUPATION > 0
-            Event_List = [Event_List; DEPARTURE, Clock + 8*QUEUE(1,1)/(C*10^6), QUEUE(1,1), QUEUE(1,2), QUEUE(1,3)];
+        if QUEUEOCCUPATION > 0                   
+            % quando o pacote é adicionado como departure à lista de
+            % eventos já lhe é adicionado o tempo que vai demorar na
+            % ligação
+            Event_List = [Event_List; DEPARTURE, Clock + 8*QUEUE(1,1)/(C*10^6), QUEUE(1,1), QUEUE(1,2), QUEUE(1,3)]; 
             QUEUEOCCUPATION= QUEUEOCCUPATION - QUEUE(1,1);
+   
+            if QUEUE(1,3) == DATA
+                QUEUEDELAYSD = QUEUEDELAYSD + (Clock - QUEUE(1,2));
+            elseif QUEUE(1,3) == VOIP
+                QUEUEDELAYSV = QUEUEDELAYSV + (Clock - QUEUE(1,2));
+            end
             QUEUE(1,:)= [];
+            % Para calcular o qD não precisamos do tempo do link
+            
         else
             STATE= 0;
         end
@@ -124,7 +138,11 @@ APDd = 1000*DELAYSD/TRANSMITTEDPACKETSD;                     % in milliseconds
 APDv = 1000*DELAYSV/TRANSMITTEDPACKETSV;                     % in milliseconds
 MPDd = 1000*MAXDELAYD;                                       % in milliseconds
 MPDv = 1000*MAXDELAYV;                                       % in milliseconds
+AQDd = 1000 * QUEUEDELAYSD / TRANSMITTEDPACKETSD;
+AQDv = 1000 * QUEUEDELAYSV / TRANSMITTEDPACKETSV;
+
 TT = 10^(-6)*(TRANSMITTEDBYTESD+TRANSMITTEDBYTESV)*8/Clock;  % in Mbps
+
 
 end
 
