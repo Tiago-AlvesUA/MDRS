@@ -139,8 +139,8 @@ APDd = 1000*DELAYSD/TRANSMITTEDPACKETSD;                     % in milliseconds
 APDv = 1000*DELAYSV/TRANSMITTEDPACKETSV;                     % in milliseconds
 MPDd = 1000*MAXDELAYD;                                       % in milliseconds
 MPDv = 1000*MAXDELAYV;                                       % in milliseconds
-AQDd = 1000 * QUEUEDELAYSD / TRANSMITTEDPACKETSD;
-AQDv = 1000 * QUEUEDELAYSV / TRANSMITTEDPACKETSV;
+AQDd = 1000*QUEUEDELAYSD/TRANSMITTEDPACKETSD;
+AQDv = 1000*QUEUEDELAYSV/TRANSMITTEDPACKETSV;
 TT = 10^(-6)*(TRANSMITTEDBYTESD+TRANSMITTEDBYTESV)*8/Clock;  % in Mbps
 
 end
