@@ -109,23 +109,24 @@ while (TRANSMITTEDPACKETSD+TRANSMITTEDPACKETSV) < P               % Stopping cri
             end
             TRANSMITTEDPACKETSV= TRANSMITTEDPACKETSV + 1;
         end
-
-        if QUEUEOCCUPATION > 0                   
-            % quando o pacote é adicionado como departure à lista de
-            % eventos já lhe é adicionado o tempo que vai demorar na
-            % ligação
-            Event_List = [Event_List; DEPARTURE, Clock + 8*QUEUE(1,1)/(C*10^6), QUEUE(1,1), QUEUE(1,2), QUEUE(1,3)]; 
-            QUEUEOCCUPATION= QUEUEOCCUPATION - QUEUE(1,1);
-            if QUEUE(1,3) == DATA
-                QUEUEDELAYSD = QUEUEDELAYSD + (Clock - QUEUE(1,2));
-            elseif QUEUE(1,3) == VOIP
-                QUEUEDELAYSV = QUEUEDELAYSV + (Clock - QUEUE(1,2));
+        if (TRANSMITTEDPACKETSD+TRANSMITTEDPACKETSV) < P
+            if QUEUEOCCUPATION > 0                   
+                % quando o pacote é adicionado como departure à lista de
+                % eventos já lhe é adicionado o tempo que vai demorar na
+                % ligação
+                Event_List = [Event_List; DEPARTURE, Clock + 8*QUEUE(1,1)/(C*10^6), QUEUE(1,1), QUEUE(1,2), QUEUE(1,3)]; 
+                QUEUEOCCUPATION= QUEUEOCCUPATION - QUEUE(1,1);
+                if QUEUE(1,3) == DATA
+                    QUEUEDELAYSD = QUEUEDELAYSD + (Clock - QUEUE(1,2));
+                elseif QUEUE(1,3) == VOIP
+                    QUEUEDELAYSV = QUEUEDELAYSV + (Clock - QUEUE(1,2));
+                end
+                QUEUE(1,:)= [];
+                % Para calcular o qD não precisamos do tempo do link
+                
+            else
+                STATE= 0;
             end
-            QUEUE(1,:)= [];
-            % Para calcular o qD não precisamos do tempo do link
-            
-        else
-            STATE= 0;
         end
     end
 end

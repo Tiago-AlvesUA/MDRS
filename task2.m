@@ -6,7 +6,7 @@ lambda = 1500;
 C = 10;
 f = 1000000;
 N = 20;
-P = 1000;     %% P = 100.000 MUDAR NO FUTURO  
+P = 100000;
 alfa = 0.1;
 n = [10 20 30 40];
 
@@ -158,6 +158,7 @@ for i = 1:4
 end
 %%%
 figure(5);
+grid on;
 bar(n, mean_APD_data);
 hold on;
 
@@ -171,6 +172,7 @@ hold off;
 
 %%%
 figure(6);
+grid on;
 bar(n, mean_APD_voip);
 hold on;
 
@@ -182,6 +184,7 @@ title('Average Delay of VoIP Packets with Error Bars');
 hold off;
 
 figure(7);
+grid on;
 bar(n, mean_AQD_data);
 hold on;
 
@@ -195,6 +198,7 @@ hold off;
 
 %%%
 figure(8);
+grid on;
 bar(n, mean_AQD_voip);
 hold on;
 
@@ -207,10 +211,10 @@ hold off;
 
 %% 2.c)
 fprintf('\nC)\n');
-C           = C * 10^6; % Convert capacity to bps
-perc_left   = (1 - (0.19 + 0.23 + 0.17)) / ((109 - 64) + (1517 - 110));
+C = C * 10^6; % Convert capacity to bps
+perc_left = (1 - (0.19 + 0.23 + 0.17)) / ((109 - 64) + (1517 - 110));
 nMedio = (64)*0.19 + (110)*0.23 + (1518)*0.17 ...
-         + sum((65:109) * perc_left) + sum((111:1518) * perc_left); %bytes
+    + sum((65:109) * perc_left) + sum((111:1518) * perc_left); %bytes
 
 % tamanho dos pacotes voip é randi([110 130])
 % taxa de chegada do tipo voip é 1 a ([16 24])
@@ -240,6 +244,7 @@ for i = 1:4
 end
 
 figure(9);
+grid on;
 bar(n, APDv);
 title('APD for VoIP Packets');
 xlabel('Number of VoIP packet Flows');

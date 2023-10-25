@@ -71,13 +71,14 @@ while TRANSMITTEDPACKETS<P               % Stopping criterium
         else
             LOSTPACKETS = LOSTPACKETS + 1;
         end
-
-        if QUEUEOCCUPATION > 0
-            Event_List = [Event_List; DEPARTURE, Clock + 8*QUEUE(1,1)/(C*10^6), QUEUE(1,1), QUEUE(1,2)];
-            QUEUEOCCUPATION= QUEUEOCCUPATION - QUEUE(1,1);
-            QUEUE(1,:)= [];
-        else
-            STATE= 0;
+        if TRANSMITTEDPACKETS<P 
+            if QUEUEOCCUPATION > 0
+                Event_List = [Event_List; DEPARTURE, Clock + 8*QUEUE(1,1)/(C*10^6), QUEUE(1,1), QUEUE(1,2)];
+                QUEUEOCCUPATION= QUEUEOCCUPATION - QUEUE(1,1);
+                QUEUE(1,:)= [];
+            else
+                STATE= 0;
+            end
         end
     end
 end

@@ -64,12 +64,14 @@ while TRANSMITTEDPACKETS<P               % Stopping criterium
             MAXDELAY= Clock - Arrival_Instant;
         end
         TRANSMITTEDPACKETS= TRANSMITTEDPACKETS + 1;
-        if QUEUEOCCUPATION > 0
-            Event_List = [Event_List; DEPARTURE, Clock + 8*QUEUE(1,1)/(C*10^6), QUEUE(1,1), QUEUE(1,2)];
-            QUEUEOCCUPATION= QUEUEOCCUPATION - QUEUE(1,1);
-            QUEUE(1,:)= [];
-        else
-            STATE= 0;
+        if TRANSMITTEDPACKETS<P 
+            if QUEUEOCCUPATION > 0
+                Event_List = [Event_List; DEPARTURE, Clock + 8*QUEUE(1,1)/(C*10^6), QUEUE(1,1), QUEUE(1,2)];
+                QUEUEOCCUPATION= QUEUEOCCUPATION - QUEUE(1,1);
+                QUEUE(1,:)= [];
+            else
+                STATE= 0;
+            end
         end
     end
 end
@@ -82,30 +84,30 @@ TT= 10^(-6)*TRANSMITTEDBYTES*8/Clock;  % in Mbps
 
 end
 
-% function out= GeneratePacketSize()
-%     aux= rand();
-%     aux2= [65:109 111:1517];
-%     if aux <= 0.19
-%         out= 64;
-%     elseif aux <= 0.19 + 0.23
-%         out= 110;
-%     elseif aux <= 0.19 + 0.23 + 0.17
-%         out= 1518;
-%     else
-%         out = aux2(randi(length(aux2)));
-%     end
-% end
-%% Pequena parte do 1.e
 function out= GeneratePacketSize()
     aux= rand();
     aux2= [65:109 111:1517];
-    if aux <= 0.25
+    if aux <= 0.19
         out= 64;
-    elseif aux <= 0.25 + 0.17
+    elseif aux <= 0.19 + 0.23
         out= 110;
-    elseif aux <= 0.25 + 0.17 + 0.11
+    elseif aux <= 0.19 + 0.23 + 0.17
         out= 1518;
     else
         out = aux2(randi(length(aux2)));
     end
 end
+%% Pequena parte do 1.e
+% function out= GeneratePacketSize()
+%     aux= rand();
+%     aux2= [65:109 111:1517];
+%     if aux <= 0.25
+%         out= 64;
+%     elseif aux <= 0.25 + 0.17
+%         out= 110;
+%     elseif aux <= 0.25 + 0.17 + 0.11
+%         out= 1518;
+%     else
+%         out = aux2(randi(length(aux2)));
+%     end
+% end

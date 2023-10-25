@@ -4,7 +4,7 @@ clear all;
 fprintf('A)\n');
 
 Num = 20;
-P = 1000;   %MUDAR PARA 100 000
+P = 100000;   
 alfa = 0.1;
 rate = 1800;
 f = 1000000;
@@ -22,12 +22,9 @@ for i = 1:4
     term_APD(i,1) = norminv(1-alfa/2) * sqrt(var(APD(i,:)) / Num);
     fprintf('APD C%d Mbps (ms) = %.2e +- %.2e\n',C(i),mean_APD(i,1),term_APD(i,1));
 end
-% fprintf('APD C10 Mbps (ms) = %.2e +- %.2e\n',mean_APD(1,1),term_APD(1,1));
-% fprintf('APD C20 Mbps (ms) = %.2e +- %.2e\n',mean_APD(2,1),term_APD(2,1));
-% fprintf('APD C30 Mbps (ms) = %.2e +- %.2e\n',mean_APD(3,1),term_APD(3,1));
-% fprintf('APD C40 Mbps (ms) = %.2e +- %.2e\n',mean_APD(4,1),term_APD(4,1));
 
 figure(1);
+grid on;
 bar(C, mean_APD);
 hold on;
 
@@ -114,6 +111,7 @@ end
 
 % Create figures
 figure(2);
+grid on;
 bar(rates, mean_APD);
 hold on;
 er_APD = errorbar(rates, mean_APD, term_APD);
@@ -125,6 +123,7 @@ ylabel('Average Packet Delay (ms)');
 title('Average Packet Delay with Error Bars');
 
 figure(3);
+grid on;
 bar(rates, mean_Throughput);
 hold on;
 er_Throughput = errorbar(rates, mean_Throughput, term_Throughput);
@@ -168,6 +167,7 @@ end
 
 % Create figures
 figure(4);
+grid on;
 bar(rates, mean_APD);
 hold on;
 er_APD = errorbar(rates, mean_APD, term_APD);
@@ -179,6 +179,7 @@ ylabel('Average Packet Delay (ms)');
 title('Average Packet Delay with Error Bars (BER)');
 
 figure(5);
+grid on;
 bar(rates, mean_Throughput);
 hold on;
 er_Throughput = errorbar(rates, mean_Throughput, term_Throughput);
