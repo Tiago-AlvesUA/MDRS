@@ -1,7 +1,7 @@
 clc;
 clear all;
 %% 2.a
-
+fprintf("A)\n");
 lambda = 1500;
 C = 10;
 f = 1000000;
@@ -15,15 +15,15 @@ APD_v = zeros(4,N);
 AQD_d = zeros(4,N);
 AQD_v = zeros(4,N);
 
-mean_APD_data = zeros(1, 4);
-term_APD_data = zeros(1, 4);
-mean_APD_voip = zeros(1, 4);
-term_APD_voip = zeros(1, 4);
+mean_APD_data = zeros(4, 1);
+term_APD_data = zeros(4, 1);
+mean_APD_voip = zeros(4, 1);
+term_APD_voip = zeros(4, 1);
 
-mean_AQD_data = zeros(1, 4);
-term_AQD_data = zeros(1, 4);
-mean_AQD_voip = zeros(1, 4);
-term_AQD_voip = zeros(1, 4);
+mean_AQD_data = zeros(4, 1);
+term_AQD_data = zeros(4, 1);
+mean_AQD_voip = zeros(4, 1);
+term_AQD_voip = zeros(4, 1);
 
 for i = 1:4
     for j = 1:N
@@ -55,15 +55,18 @@ for i = 1:4
     fprintf('AQD voip n%d Mbps (ms) = %.2e +- %.2e\n\n',n(i),mean_AQD_voip(i,1),term_AQD_voip(i,1));
 end
 %%%
+
 figure(1);
 bar(n, mean_APD_data);
 hold on;
 
 er = errorbar(n, mean_APD_data, term_APD_data);
+er.Color = [1 0 0];
+er.LineStyle = "none";
 
 xlabel('n VoIP flows');
-ylabel('Average Delay of Data Packets(ms)');
-title('Average Delay of Data Packets with Error Bars');
+ylabel('Average Packet Delay (ms)');
+title('Average Packet Delay of Data');
 hold off;
 
 %%%
@@ -72,10 +75,12 @@ bar(n, mean_APD_voip);
 hold on;
 
 er = errorbar(n, mean_APD_voip, term_APD_voip);
+er.Color = [1 0 0];
+er.LineStyle = "none";
 
 xlabel('n VoIP flows');
-ylabel('Average Delay of VoIP Packets(ms)');
-title('Average Delay of VoIP Packets with Error Bars');
+ylabel('Average Packet Delay (ms)');
+title('Average Packet Delay of VoIP');
 hold off;
 
 figure(3);
@@ -83,11 +88,12 @@ bar(n, mean_AQD_data);
 hold on;
 
 er = errorbar(n, mean_AQD_data, term_AQD_data);
-
+er.Color = [1 0 0];
+er.LineStyle = "none";
 
 xlabel('n VoIP flows');
-ylabel('QUEUEing Delay of Data Packets(ms)');
-title('QUEUEing Delay of Data Packets with Error Bars');
+ylabel('Average Queue Delay (ms)');
+title('Average Queue Delay of Data');
 hold off;
 
 %%%
@@ -96,19 +102,22 @@ bar(n, mean_AQD_voip);
 hold on;
 
 er = errorbar(n, mean_AQD_voip, term_AQD_voip);
+er.Color = [1 0 0];
+er.LineStyle = "none";
 
 xlabel('n VoIP flows');
-ylabel('QUEUEing Delay of VoIP Packets(ms)');
-title('QUEUEing Delay of VoIP Packets with Error Bars');
+ylabel('Average Queue Delay (ms)');
+title('Average Queue Delay of VoIP');
 hold off;
 
+keyboard;
 %% 2.b
-
+fprintf("\nB)\n");
 lambda = 1500;
 C = 10;
 f = 1000000;
 N = 20;
-P = 1000;     %% P = 100.000 MUDAR NO FUTURO  
+P = 100000;
 alfa = 0.1;
 n = [10 20 30 40];
 
@@ -117,15 +126,15 @@ APD_v = zeros(4,N);
 AQD_d = zeros(4,N);
 AQD_v = zeros(4,N);
 
-mean_APD_data = zeros(1, 4);
-term_APD_data = zeros(1, 4);
-mean_APD_voip = zeros(1, 4);
-term_APD_voip = zeros(1, 4);
+mean_APD_data_Priority = zeros(4, 1);
+term_APD_data_Priority = zeros(4, 1);
+mean_APD_voip_Priority = zeros(4, 1);
+term_APD_voip_Priority = zeros(4, 1);
 
-mean_AQD_data = zeros(1, 4);
-term_AQD_data = zeros(1, 4);
-mean_AQD_voip = zeros(1, 4);
-term_AQD_voip = zeros(1, 4);
+mean_AQD_data_Priority = zeros(4, 1);
+term_AQD_data_Priority = zeros(4, 1);
+mean_AQD_voip_Priority = zeros(4, 1);
+term_AQD_voip_Priority = zeros(4, 1);
 
 for i = 1:4
     for j = 1:N
@@ -133,79 +142,86 @@ for i = 1:4
     end
     
     % calculo do average delay of data packets
-    mean_APD_data(i,1) = mean(APD_d(i,:));
-    term_APD_data(i,1) = norminv(1-alfa/2) * sqrt(var(APD_d(i,:)) / N);
+    mean_APD_data_Priority(i,1) = mean(APD_d(i,:));
+    term_APD_data_Priority(i,1) = norminv(1-alfa/2) * sqrt(var(APD_d(i,:)) / N);
     % calculo do average delay of voip packets
-    mean_APD_voip(i,1) = mean(APD_v(i,:));
-    term_APD_voip(i,1) = norminv(1-alfa/2) * sqrt(var(APD_v(i,:)) / N);
+    mean_APD_voip_Priority(i,1) = mean(APD_v(i,:));
+    term_APD_voip_Priority(i,1) = norminv(1-alfa/2) * sqrt(var(APD_v(i,:)) / N);
 
     % calculo do average queuing delay of VoIP packets
 
-    fprintf('Priority APD data n%d Mbps (ms) = %.2e +- %.2e\n',n(i),mean_APD_data(i,1),term_APD_data(i,1));
-    fprintf('Priority APD voip n%d Mbps (ms) = %.2e +- %.2e\n',n(i),mean_APD_voip(i,1),term_APD_voip(i,1));
+    fprintf('Priority APD data n%d Mbps (ms) = %.2e +- %.2e\n',n(i),mean_APD_data_Priority(i,1),term_APD_data_Priority(i,1));
+    fprintf('Priority APD voip n%d Mbps (ms) = %.2e +- %.2e\n',n(i),mean_APD_voip_Priority(i,1),term_APD_voip_Priority(i,1));
 
     % calculo do average delay of data packets
-    mean_AQD_data(i,1) = mean(AQD_d(i,:));
-    term_AQD_data(i,1) = norminv(1-alfa/2) * sqrt(var(AQD_d(i,:)) / N);
+    mean_AQD_data_Priority(i,1) = mean(AQD_d(i,:));
+    term_AQD_data_Priority(i,1) = norminv(1-alfa/2) * sqrt(var(AQD_d(i,:)) / N);
     % calculo do average delay of voip packets
-    mean_AQD_voip(i,1) = mean(AQD_v(i,:));
-    term_AQD_voip(i,1) = norminv(1-alfa/2) * sqrt(var(AQD_v(i,:)) / N);
+    mean_AQD_voip_Priority(i,1) = mean(AQD_v(i,:));
+    term_AQD_voip_Priority(i,1) = norminv(1-alfa/2) * sqrt(var(AQD_v(i,:)) / N);
 
     % calculo do average queuing delay of VoIP packets
 
-    fprintf('Priority AQD data n%d Mbps (ms) = %.2e +- %.2e\n',n(i),mean_AQD_data(i,1),term_AQD_data(i,1));
-    fprintf('Priority AQD voip n%d Mbps (ms) = %.2e +- %.2e\n\n',n(i),mean_AQD_voip(i,1),term_AQD_voip(i,1));
+    fprintf('Priority AQD data n%d Mbps (ms) = %.2e +- %.2e\n',n(i),mean_AQD_data_Priority(i,1),term_AQD_data_Priority(i,1));
+    fprintf('Priority AQD voip n%d Mbps (ms) = %.2e +- %.2e\n\n',n(i),mean_AQD_voip_Priority(i,1),term_AQD_voip_Priority(i,1));
 end
 %%%
 figure(5);
 grid on;
-bar(n, mean_APD_data);
+bar(n, mean_APD_data_Priority);
 hold on;
 
-er = errorbar(n, mean_APD_data, term_APD_data);
-
+er = errorbar(n, mean_APD_data_Priority, term_APD_data_Priority);
+er.Color = [1 0 0];
+er.LineStyle = "none";
 
 xlabel('n VoIP flows');
-ylabel('Average Delay of Data Packets(ms)');
-title('Average Delay of Data Packets with Error Bars');
+ylabel('Average Packet Delay (ms)');
+title('Average Packet Delay of Data - VoIP with higher priority');
 hold off;
 
 %%%
 figure(6);
 grid on;
-bar(n, mean_APD_voip);
+bar(n, mean_APD_voip_Priority);
 hold on;
 
-er = errorbar(n, mean_APD_voip, term_APD_voip);
+er = errorbar(n, mean_APD_voip_Priority, term_APD_voip_Priority);
+er.Color = [1 0 0];
+er.LineStyle = "none";
 
 xlabel('n VoIP flows');
-ylabel('Average Delay of VoIP Packets(ms)');
-title('Average Delay of VoIP Packets with Error Bars');
+ylabel('Average Packet Delay (ms)');
+title('Average Packet Delay of VoIP - VoIP with higher priority');
 hold off;
 
 figure(7);
 grid on;
-bar(n, mean_AQD_data);
+bar(n, mean_AQD_data_Priority);
 hold on;
 
-er = errorbar(n, mean_AQD_data, term_AQD_data);
+er = errorbar(n, mean_AQD_data_Priority, term_AQD_data_Priority);
+er.Color = [1 0 0];
+er.LineStyle = "none";
 
 xlabel('n VoIP flows');
-ylabel('Priority QUEUEing Delay of Data Packets(ms)');
-title('Priority QUEUEing Delay of Data Packets with Error Bars');
+ylabel('Average Queue Delay (ms)');
+title('Average Queue Delay of Data - VoIP with higher priority');
 hold off;
 
 %%%
 figure(8);
 grid on;
-bar(n, mean_AQD_voip);
+bar(n, mean_AQD_voip_Priority);
 hold on;
 
-er = errorbar(n, mean_AQD_voip, term_AQD_voip);
+er = errorbar(n, mean_AQD_voip_Priority, term_AQD_voip_Priority);
+er.Color = [1 0 0];
+er.LineStyle = "none";
 
 xlabel('n VoIP flows');
-ylabel('Priority QUEUEing Delay of VoIP Packets(ms)');
-title('Priority QUEUEing Delay of VoIP Packets with Error Bars');
+ylabel('Average Queue Delay (ms)');
+title('Average Queue Delay of VoIP - VoIP with higher priority');
 hold off;
 
 %% 2.c)
@@ -239,8 +255,8 @@ fprintf('Valores teóricos\n');
 for i = 1:4
     for j = 1:length(x)
         if x(j) == 64
-            S(j) 
-
+            %S(j) 
+        end
     end
         % pk = lambda_k * E[S_k]
         pA = (lambda_voip * n(i)) * S_v;
@@ -249,9 +265,9 @@ for i = 1:4
         fprintf('n=%d: w = %0.2f ms\n', n(i), wA*1e3);
 end
 
-figure(9);
-grid on;
-bar(n, APDv);
-title('APD for VoIP Packets');
-xlabel('Number of VoIP packet Flows');
-ylabel('APD_v (ms)');
+% figure(9);
+% grid on;
+% bar(n, APDv);
+% title('APD for VoIP Packets');
+% xlabel('Number of VoIP packet Flows');
+% ylabel('APD_v (ms)');
