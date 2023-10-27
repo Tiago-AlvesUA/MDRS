@@ -23,21 +23,6 @@ for i = 1:4
     fprintf('APD C%d Mbps (ms) = %.2e +- %.2e\n',C(i),mean_APD(i,1),term_APD(i,1));
 end
 
-figure(1);
-grid on;
-bar(C, mean_APD);
-hold on;
-
-er = errorbar(C, mean_APD, term_APD);
-er.Color = [1 0 0];
-er.LineStyle = 'none';
-
-hold off;
-
-xlabel('C (Mbps)');
-ylabel('Average Packet Delay (ms)');
-title('Average Packet Delay with Error Bars');
-keyboard;
 %% 1.b
 fprintf('\nB)\n');
 C = C.*10^6;
@@ -109,32 +94,6 @@ for i = 1:4
     fprintf('Average Throughput (Mbps) (rate = %d pps) = %.2e +- %.2e\n', rates(i), mean_Throughput(i), term_Throughput(i));
 end
 
-% Create figures
-figure(2);
-grid on;
-bar(rates, mean_APD);
-hold on;
-er_APD = errorbar(rates, mean_APD, term_APD);
-er_APD.Color = [1 0 0];
-er_APD.LineStyle = 'none';
-hold off;
-xlabel('Packet Arrival Rate (pps)');
-ylabel('Average Packet Delay (ms)');
-title('Average Packet Delay with Error Bars');
-
-figure(3);
-grid on;
-bar(rates, mean_Throughput);
-hold on;
-er_Throughput = errorbar(rates, mean_Throughput, term_Throughput);
-er_Throughput.Color = [1 0 0];
-er_Throughput.LineStyle = 'none';
-hold off;
-xlabel('Packet Arrival Rate (pps)');
-ylabel('Average Throughput (Mbps)');
-title('Average Throughput with Error Bars');
-
-keyboard;
 %% 1.d 
 fprintf('\nD)\n');
 
@@ -164,31 +123,6 @@ for i = 1:4
     % Display results for average throughput
     fprintf('Average Throughput (Mbps) (rate = %d pps) = %.2e +- %.2e\n', rates(i), mean_Throughput(i), term_Throughput(i));
 end
-
-% Create figures
-figure(4);
-grid on;
-bar(rates, mean_APD);
-hold on;
-er_APD = errorbar(rates, mean_APD, term_APD);
-er_APD.Color = [1 0 0];
-er_APD.LineStyle = 'none';
-hold off;
-xlabel('Packet Arrival Rate (pps)');
-ylabel('Average Packet Delay (ms)');
-title('Average Packet Delay with Error Bars (BER)');
-
-figure(5);
-grid on;
-bar(rates, mean_Throughput);
-hold on;
-er_Throughput = errorbar(rates, mean_Throughput, term_Throughput);
-er_Throughput.Color = [1 0 0];
-er_Throughput.LineStyle = 'none';
-hold off;
-xlabel('Packet Arrival Rate (pps)');
-ylabel('Average Throughput (Mbps)');
-title('Average Throughput with Error Bars (BER)');
 
 
 % Comparando com BER temos ligeiramente menos throughput e ligeiramente mais atraso
