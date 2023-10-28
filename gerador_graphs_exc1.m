@@ -1,71 +1,48 @@
+clc;clear ALL;
 load('ex1.mat');
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 1.a
 figure(1);
-bar(C, mean_APD);
+bar(C, mean_APD_C);
 hold on;
 
-er = errorbar(C, mean_APD, term_APD);
-er.Color = [1, 0, 0];
-er.LineStyle = "none";
+errorbar(C, mean_APD_C, term_APD_C);
+
 
 xlabel('C (Mbps)');
 ylabel('Average Packet Delay (ms)');
 title('Average Packet Delay with Error Bars');
-grid on; hold off;
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+grid on; 
+hold off;
 
+%% 1.c&d
 figure(2);
-bar(rates, mean_APD);
-hold on;
-er = errorbar(rates, mean_APD, term_APD);
-er.Color = [1 0 0];
-er.LineStyle = "none";
 
+% Primeiro subplot - Average Packet Delay
+subplot(1, 2, 1);
+hold on;
+bar(rates, [mean_APD, mean_APD_ber]);
+errorbar((rates-45), mean_APD, term_APD, 'r.', 'MarkerSize', 5, 'LineStyle', 'none');
+errorbar((rates+45), mean_APD_ber, term_APD_ber, 'b.', 'MarkerSize', 5, 'LineStyle', 'none');
+
+xticks(rates);
 xlabel('Packet Arrival Rate (pps)');
+ylim([0 10]);
 ylabel('Average Packet Delay (ms)');
-title('Average Packet Delay with Error Bars');
-grid on; hold off;
+title('Average Packet Delay');
+legend({'Without BER', 'With BER'}, 'Location','northwest');
+grid on;
+hold off;
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-figure(3);
-bar(rates, mean_Throughput);
+% Segundo subplot - Average Throughput
+subplot(1, 2, 2);
 hold on;
-er= errorbar(rates, mean_Throughput, term_Throughput);
-er.Color = [1 0 0];
-er.LineStyle = "none";
-
+bar(rates, [mean_Throughput, mean_Throughput_ber]);
+errorbar(rates - 45, mean_Throughput, term_Throughput, 'r.', 'MarkerSize', 10, 'LineStyle', 'none');
+errorbar(rates + 45, mean_Throughput_ber, term_Throughput_ber, 'b.', 'MarkerSize', 10, 'LineStyle', 'none');
+xticks(rates);
 xlabel('Packet Arrival Rate (pps)');
 ylabel('Average Throughput (Mbps)');
-title('Average Throughput with Error Bars');
-grid on; hold off;
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Crie o gráfico para a média do Atraso Médio de Pacotes
-figure(4);
-bar(rates, mean_APD);
-hold on;
-er_APD = errorbar(rates, mean_APD, term_APD);
-er_APD.Color = [1 0 0];
-er_APD.LineStyle = 'none';
-
-xlabel('Packet Arrival Rate (pps)');
-ylabel('Average Packet Delay (ms)');
-title('Average Packet Delay with Error Bars (BER)');
-grid on; hold off;
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Crie o gráfico para a média da Taxa de Transferência Média
-figure(5);
-
-bar(rates, mean_Throughput);
-hold on;
-er = errorbar(rates, mean_Throughput, term_Throughput);
-er.Color = [1 0 0];
-er.LineStyle = "none";
-
-xlabel('Packet Arrival Rate (pps)');
-ylabel('Average Throughput (Mbps)');
-title('Average Throughput with Error Bars (BER)');
-grid on; hold off;
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+title('Average Throughput');
+legend({'Without BER', 'With BER'}, 'Location','northwest');
+grid on;
+hold off;

@@ -10,17 +10,17 @@ rate = 1800;
 f = 1000000;
 C = [10 20 30 40];
 
-APD = zeros(4, Num);
-mean_APD = zeros(4, 1);
-term_APD = zeros(4, 1);
+APD_C = zeros(4, Num);
+mean_APD_C = zeros(4, 1);
+term_APD_C = zeros(4, 1);
 
 for i = 1:4
     for j = 1:Num
-        [~, APD(i, j), ~, ~] = Simulator1(rate, C(i), f, P);
+        [~, APD_C(i, j), ~, ~] = Simulator1(rate, C(i), f, P);
     end
-    mean_APD(i,1) = mean(APD(i,:));
-    term_APD(i,1) = norminv(1-alfa/2) * sqrt(var(APD(i,:)) / Num);
-    fprintf('APD C%d Mbps (ms) = %.2e +- %.2e\n',C(i),mean_APD(i,1),term_APD(i,1));
+    mean_APD_C(i,1) = mean(APD_C(i,:));
+    term_APD_C(i,1) = norminv(1-alfa/2) * sqrt(var(APD_C(i,:)) / Num);
+    fprintf('APD C%d Mbps (ms) = %.2e +- %.2e\n',C(i),mean_APD_C(i,1),term_APD_C(i,1));
 end
 
 %% 1.b
@@ -63,7 +63,7 @@ end
 for i = 1:4
     fprintf('Theoretical value APD C%d Mbps (ms) = %.2e\n',C(i)/10^6,APD(i)*1000);
 end
-keyboard;
+
 %% 1.c
 fprintf('\nC)\n');
 
@@ -100,30 +100,27 @@ fprintf('\nD)\n');
 b = 10^-5;
 C = 10;
 rates = [1000 1300 1600 1900];
-TT = zeros(4, Num);
-mean_Throughput = zeros(4, 1);
-term_Throughput = zeros(4, 1);
-APD = zeros(4, Num);
-mean_APD = zeros(4, 1);
-term_APD = zeros(4, 1);
+
+TT_ber = zeros(4, Num);
+mean_Throughput_ber = zeros(4, 1);
+term_Throughput_ber = zeros(4, 1);
+APD_ber = zeros(4, Num);
+mean_APD_ber = zeros(4, 1);
+term_APD_ber = zeros(4, 1);
 
 for i = 1:4
     for j = 1:Num
-        [~, APD(i, j), ~, TT(i, j)] = Simulator2(rates(i), C, f, P, b);
+        [~, APD_ber(i, j), ~, TT_ber(i, j)] = Simulator2(rates(i), C, f, P, b);
     end
 
-    mean_APD(i,1) = mean(APD(i,:));
-    term_APD(i,1) = norminv(1-alfa/2) * sqrt(var(APD(i,:)) / Num);
+    mean_APD_ber(i,1) = mean(APD_ber(i,:));
+    term_APD_ber(i,1) = norminv(1-alfa/2) * sqrt(var(APD_ber(i,:)) / Num);
     
     % Display results for average packet delay
-    fprintf('Average Packet Delay (ms) (rate = %d pps) = %.2e +- %.2e\n', rates(i), mean_APD(i), term_APD(i));
+    fprintf('Average Packet Delay w/ BER (ms) (rate = %d pps) = %.2e +- %.2e\n', rates(i), mean_APD_ber(i), term_APD_ber(i));
 
-    mean_Throughput(i,1) = mean(TT(i,:));
-    term_Throughput(i,1) = norminv(1-alfa/2) * sqrt(var(TT(i,:)) / Num);
+    mean_Throughput_ber(i,1) = mean(TT_ber(i,:));
+    term_Throughput_ber(i,1) = norminv(1-alfa/2) * sqrt(var(TT_ber(i,:)) / Num);
     % Display results for average throughput
-    fprintf('Average Throughput (Mbps) (rate = %d pps) = %.2e +- %.2e\n', rates(i), mean_Throughput(i), term_Throughput(i));
+    fprintf('Average Throughput w/ BER (Mbps) (rate = %d pps) = %.2e +- %.2e\n', rates(i), mean_Throughput_ber(i), term_Throughput_ber(i));
 end
-
-
-% Comparando com BER temos ligeiramente menos throughput e ligeiramente mais atraso
-% Ver o PORQUE destas cenas
