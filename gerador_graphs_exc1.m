@@ -2,11 +2,9 @@ clc;clear ALL;
 load('ex1.mat');
 %% 1.a
 figure(1);
-bar(C, mean_APD_C);
 hold on;
-
-errorbar(C, mean_APD_C, term_APD_C);
-
+bar(C_a, mean_APD_C);
+errorbar(C_a, mean_APD_C, term_APD_C, 'r.', 'MarkerSize', 10, 'LineStyle', 'none');
 
 xlabel('C (Mbps)');
 ylabel('Average Packet Delay (ms)');

@@ -8,7 +8,7 @@ P = 100000;
 alfa = 0.1;
 rate = 1800;
 f = 1000000;
-C = [10 20 30 40];
+C_a = [10 20 30 40];
 
 APD_C = zeros(4, Num);
 mean_APD_C = zeros(4, 1);
@@ -16,16 +16,16 @@ term_APD_C = zeros(4, 1);
 
 for i = 1:4
     for j = 1:Num
-        [~, APD_C(i, j), ~, ~] = Simulator1(rate, C(i), f, P);
+        [~, APD_C(i, j), ~, ~] = Simulator1(rate, C_a(i), f, P);
     end
     mean_APD_C(i,1) = mean(APD_C(i,:));
     term_APD_C(i,1) = norminv(1-alfa/2) * sqrt(var(APD_C(i,:)) / Num);
-    fprintf('APD C%d Mbps (ms) = %.2e +- %.2e\n',C(i),mean_APD_C(i,1),term_APD_C(i,1));
+    fprintf('APD C%d Mbps (ms) = %.2e +- %.2e\n',C_a(i),mean_APD_C(i,1),term_APD_C(i,1));
 end
 
 %% 1.b
 fprintf('\nB)\n');
-C = C.*10^6;
+C_a = C_a.*10^6;
 
 perc_left = (1 - (0.19+0.23+0.17))/((109 - 64) + (1517 - 110));
 
@@ -38,19 +38,19 @@ APD = zeros(1,4);
 for j = 1:4 % Loop valores de C
     for i = 1:length(x)
         if x(i) == 64
-            s = (x(i) * 8) / C(j);
+            s = (x(i) * 8) / C_a(j);
             S(j,i) = 0.19 * s;
             S2(j,i) = 0.19 * s^2;
         elseif x(i) == 110
-            s = (x(i) * 8) / C(j);
+            s = (x(i) * 8) / C_a(j);
             S(j,i) = 0.23 * s;
             S2(j,i) = 0.23 * s^2;        
         elseif x(i) == 1518
-            s = (x(i) * 8) / C(j);
+            s = (x(i) * 8) / C_a(j);
             S(j,i) = 0.17 * s;
             S2(j,i) = 0.17 * s^2;    
         else
-            s = (x(i) * 8) / C(j);
+            s = (x(i) * 8) / C_a(j);
             S(j,i) = perc_left * s;
             S2(j,i) = perc_left * s^2;         
         end
@@ -61,7 +61,7 @@ for j = 1:4 % Loop valores de C
 end
 
 for i = 1:4
-    fprintf('Theoretical value APD C%d Mbps (ms) = %.2e\n',C(i)/10^6,APD(i)*1000);
+    fprintf('Theoretical value APD C%d Mbps (ms) = %.2e\n',C_a(i)/10^6,APD(i)*1000);
 end
 
 %% 1.c
