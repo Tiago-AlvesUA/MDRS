@@ -1,4 +1,4 @@
-function [PL , APD , MPD , TT] = Simulator2(lambda,C,f,P,b)
+function [PL , APD , MPD , TT] = eSimulator1(lambda,C,f,P)
 % INPUT PARAMETERS:
 %  lambda - packet rate (packets/sec)
 %  C      - link bandwidth (Mbps)
@@ -43,7 +43,6 @@ while TRANSMITTEDPACKETS<P               % Stopping criterium
     Arrival_Instant= Event_List(1,4);    %   parameters.
     Event_List(1,:)= [];                 % Eliminate first event
     if Event == ARRIVAL         % If first event is an ARRIVAL
-        
         TOTALPACKETS= TOTALPACKETS+1;
         tmp= Clock + exprnd(1/lambda);
         Event_List = [Event_List; ARRIVAL, tmp, GeneratePacketSize(), tmp];
@@ -59,18 +58,12 @@ while TRANSMITTEDPACKETS<P               % Stopping criterium
             end
         end
     else                        % If first event is a DEPARTURE
-        % Se pacote tem 1 ou + erros -> descartado
-        % prob0erros = nchoosek(PacketSize*8,0) * b^0 * (1-b)^(PacketSize*8-0)
-        if(rand() < (1-b)^(Packet_Size*8))
-            TRANSMITTEDBYTES= TRANSMITTEDBYTES + Packet_Size;
-            DELAYS= DELAYS + (Clock - Arrival_Instant);
-            if Clock - Arrival_Instant > MAXDELAY
-                MAXDELAY= Clock - Arrival_Instant;
-            end
-            TRANSMITTEDPACKETS= TRANSMITTEDPACKETS + 1;
-        else
-            LOSTPACKETS = LOSTPACKETS + 1;
+        TRANSMITTEDBYTES= TRANSMITTEDBYTES + Packet_Size;
+        DELAYS= DELAYS + (Clock - Arrival_Instant);
+        if Clock - Arrival_Instant > MAXDELAY
+            MAXDELAY= Clock - Arrival_Instant;
         end
+        TRANSMITTEDPACKETS= TRANSMITTEDPACKETS + 1;
         if TRANSMITTEDPACKETS<P 
             if QUEUEOCCUPATION > 0
                 Event_List = [Event_List; DEPARTURE, Clock + 8*QUEUE(1,1)/(C*10^6), QUEUE(1,1), QUEUE(1,2)];
@@ -91,14 +84,15 @@ TT= 10^(-6)*TRANSMITTEDBYTES*8/Clock;  % in Mbps
 
 end
 
+% Pequena parte do 1.e
 function out= GeneratePacketSize()
     aux= rand();
     aux2= [65:109 111:1517];
-    if aux <= 0.19
+    if aux <= 0.25
         out= 64;
-    elseif aux <= 0.19 + 0.23
+    elseif aux <= 0.25 + 0.17
         out= 110;
-    elseif aux <= 0.19 + 0.23 + 0.17
+    elseif aux <= 0.25 + 0.17 + 0.11
         out= 1518;
     else
         out = aux2(randi(length(aux2)));

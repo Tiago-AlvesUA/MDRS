@@ -97,17 +97,3 @@ function out= GeneratePacketSize()
         out = aux2(randi(length(aux2)));
     end
 end
-%% Pequena parte do 1.e
-% function out= GeneratePacketSize()
-%     aux= rand();
-%     aux2= [65:109 111:1517];
-%     if aux <= 0.25
-%         out= 64;
-%     elseif aux <= 0.25 + 0.17
-%         out= 110;
-%     elseif aux <= 0.25 + 0.17 + 0.11
-%         out= 1518;
-%     else
-%         out = aux2(randi(length(aux2)));
-%     end
-% end
