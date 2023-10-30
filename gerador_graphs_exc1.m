@@ -7,7 +7,7 @@ figure(1);
 hold on;
 bar(C_a, mean_APD_C);
 errorbar(C_a, mean_APD_C, term_APD_C, 'r.', 'MarkerSize', 5, 'LineStyle', 'none');
-
+xticks(C_a);
 xlabel('C (Mbps)');
 ylabel('Average Packet Delay (ms)');
 title('Average Packet Delay with Error Bars');
