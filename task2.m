@@ -169,8 +169,9 @@ fprintf('Valores teóricos\n');
 for i = 1:4
     % pk = lambda_k * E[S_k]
     lambda_each_flow_voip = lambda_voip * n(i);
-    pA = (lambda_each_flow_voip) * ES_v;
-    pB = lambda * ES; % para o data 
+    pA = (lambda_each_flow_voip) * ES_v; % 0.1920
+    pB = lambda * ES; % para o data = 0.7440
+    % Verifica-se a condição de validade pA+pB < 1 -> 0.9360
     wA = (((lambda_each_flow_voip * ES2_v + lambda * ES2) / (2 * (1 - pA))) + ES_v) * 1e3; % segundos
     wB = (((lambda_each_flow_voip * ES2_v + lambda * ES2) / (2 * (1 - pA)) * (1- pA -pB) ) + ES_v) * 1e3; % segundos
     APDv(i) = wA;

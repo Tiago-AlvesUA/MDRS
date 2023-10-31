@@ -118,7 +118,7 @@ ylabel('Average Packet Delay (ms)');
 title('Average Packet Delay of Data');
 legend({'With priority higher to DATA', 'Theorical to DATA'}, 'Location', 'NorthWest');
 ylim([0 8]);
-set(gca, 'ColorOrder', [0 0.8 0.5; 0.8 0.8 0.5]);
+set(gca, 'ColorOrder', [0 0.8 0.5; 0 0 0.8]);
 grid on;
 hold off;
 
@@ -134,7 +134,7 @@ ylabel('Average Packet Delay (ms)');
 title('Average Packet Delay of VoIP');
 legend({'With priority higher to VoIP', 'Theorical to VoIP'}, 'Location', 'NorthWest');
 ylim([0 8]);
-set(gca, 'ColorOrder', [0 0.8 0.5; 0.8 0.8 0.5]);
+set(gca, 'ColorOrder', [0 0.8 0.5; 0 0 0.8]);
 grid on;
 hold off;
 
@@ -150,7 +150,7 @@ ylabel('Average Queue Delay (ms)');
 title('Average Queue Delay of Data');
 legend({'With priority higher to DATA', 'Theorical to DATA'}, 'Location', 'NorthWest');
 ylim([0 8]);
-set(gca, 'ColorOrder', [0 0.8 0.5; 0.8 0.8 0.5]);
+set(gca, 'ColorOrder', [0 0.8 0.5; 0 0 0.8]);
 grid on;
 hold off;
 
@@ -165,6 +165,6 @@ ylabel('Average Queue Delay (ms)');
 title('Average Queue Delay of VoIP');
 legend({'With priority higher to VoIP', 'Theorical to VoIP'}, 'Location', 'NorthWest');
 ylim([0 8]);
-set(gca, 'ColorOrder', [0 0.8 0.5; 0.8 0.8 0.5]);
+set(gca, 'ColorOrder', [0 0.8 0.5; 0 0 0.8]);
 grid on;
 hold off;
