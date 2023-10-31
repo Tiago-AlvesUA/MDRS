@@ -10,6 +10,7 @@ P = 100000;
 alfa = 0.1;
 n = [10 20 30 40];
 
+
 APD_d = zeros(4,N);
 APD_v = zeros(4,N);
 AQD_d = zeros(4,N);
@@ -110,7 +111,6 @@ for i = 1:4
     fprintf('Priority AQD voip n%d Mbps (ms) = %.2e +- %.2e\n\n',n(i),mean_AQD_voip_Priority(i,1),term_AQD_voip_Priority(i,1));
 end
 
-
 %% 2.c
 fprintf('\nC)\n');
 n = [10 20 30 40]; % Number of VoIP packet flows
@@ -124,30 +124,30 @@ C = C * 10^6; % Convert capacity to bps
 perc_left = (1 - (0.19 + 0.23 + 0.17)) / ((109 - 64) + (1517 - 110));
 
 x = 64:1518;
-S = zeros(4,length(x));
-S2 = zeros(4,length(x));
+S = zeros(1,length(x));
+S2 = zeros(1,length(x));
 
 for i = 1:length(x)
     if x(i) == 64
         s = (x(i) * 8) / C;
-        S(j,i) = 0.19 * s;
-        S2(j,i) = 0.19 * s^2;
+        S(1,i) = 0.19 * s;
+        S2(1,i) = 0.19 * s^2;
     elseif x(i) == 110
         s = (x(i) * 8) / C;
-        S(j,i) = 0.23 * s;
-        S2(j,i) = 0.23 * s^2;        
+        S(1,i) = 0.23 * s;
+        S2(1,i) = 0.23 * s^2;        
     elseif x(i) == 1518
         s = (x(i) * 8) / C;
-        S(j,i) = 0.17 * s;
-        S2(j,i) = 0.17 * s^2;    
+        S(1,i) = 0.17 * s;
+        S2(1,i) = 0.17 * s^2;    
     else
         s = (x(i) * 8) / C;
-        S(j,i) = perc_left * s;
-        S2(j,i) = perc_left * s^2;         
+        S(1,i) = perc_left * s;
+        S2(1,i) = perc_left * s^2;         
     end
 end
-ES = sum(S(j,:));
-ES2 = sum(S2(j,:));
+ES = sum(S(1,:));
+ES2 = sum(S2(1,:));
 % Calcula mos no fim o M/G/1 with priorities
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % VOIP
@@ -162,21 +162,31 @@ ES_v = 1/u_voip; % Service time, S
 ES2_v = 1/(u_voip^2); % S^2
 % A seguir calculamos o M/G/1 with priorities
 
-APDv = zeros(4, 1); % Initialize an array for VoIP APD
+APDv = zeros(4, 1); % Initialize an array for VoIP VoIP
 APDd = zeros(4, 1); % Initialize an array for VoIP APD
 fprintf('Valores teóricos\n');
 % Percorremos os fluxos todos
 for i = 1:4
     % pk = lambda_k * E[S_k]
-    lambda_each_flow_voip = lambda_voip * n(i);
-    pA = (lambda_each_flow_voip) * ES_v; % 0.1920
-    pB = lambda * ES; % para o data = 0.7440
+    lambda_nflows_voip = lambda_voip * n(i);
+    pA = (lambda_nflows_voip) * ES_v;   % ró voip = 0.1920
+    pB = lambda * ES;                   % ró data = 0.7440
     % Verifica-se a condição de validade pA+pB < 1 -> 0.9360
-    wA = (((lambda_each_flow_voip * ES2_v + lambda * ES2) / (2 * (1 - pA))) + ES_v) * 1e3; % segundos
-    wB = (((lambda_each_flow_voip * ES2_v + lambda * ES2) / (2 * (1 - pA)) * (1- pA -pB) ) + ES_v) * 1e3; % segundos
+    wA = (((lambda_nflows_voip * ES2_v + lambda * ES2) / (2 * (1 - pA))) + ES_v) * 1e3; % segundos
+    wB = ((lambda_nflows_voip * ES2_v + lambda * ES2) / (2 * (1 - pA) * (1- pA -pB) )+ ES_v) * 1e3; % segundos
     APDv(i) = wA;
     APDd(i) = wB;
 end
                     
+figure(1)
+bar(n,APDd)
 
+xlabel('Number of VoIP flows')
+title('Average data packet delay (ms)')
+
+figure(2)
+bar(n,APDv)
+
+xlabel('Number of VoIP flows')
+title('Average VoIP packet delay (ms)')
 
