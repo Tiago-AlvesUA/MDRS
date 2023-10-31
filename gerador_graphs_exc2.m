@@ -28,6 +28,7 @@ errorbar((n-1.5), mean_APD_voip, term_APD_voip,'r.', 'MarkerSize', 5, 'LineStyle
 errorbar((n+1.5), mean_AQD_voip, term_AQD_voip,'r.', 'MarkerSize', 5, 'LineStyle', 'none');
 
 xlabel('n VoIP flows');
+ylim([0 7])
 ylabel('Average Delay (ms)');
 title('Average Packet Delay vs Average Queueing Delay of VoIP');
 legend({'APD', 'AQD'}, 'Location','northwest');
@@ -131,7 +132,7 @@ errorbar((n-1.5), mean_APD_voip_Priority, term_APD_voip_Priority,'r.', 'MarkerSi
 xlabel('n VoIP flows');
 xticks(n);
 ylabel('Average Packet Delay (ms)');
-title('Average Packet Delay of Data w/ priority VoIP');
+title('Average Packet Delay of VoIP w/ priority VoIP');
 legend({'Simulation Values', 'Theorical values'}, 'Location', 'NorthWest');
 ylim([0 8]);
 set(gca, 'ColorOrder', [0 0.8 0.5; 0 0 0.8]);

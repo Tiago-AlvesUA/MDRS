@@ -177,16 +177,3 @@ for i = 1:4
     APDv(i) = wA;
     APDd(i) = wB;
 end
-                    
-figure(1)
-bar(n,APDd)
-
-xlabel('Number of VoIP flows')
-title('Average data packet delay (ms)')
-
-figure(2)
-bar(n,APDv)
-
-xlabel('Number of VoIP flows')
-title('Average VoIP packet delay (ms)')
-
