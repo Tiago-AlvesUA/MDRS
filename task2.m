@@ -111,43 +111,71 @@ for i = 1:4
 end
 
 
-%% 2.c)
+%% 2.c
 fprintf('\nC)\n');
-C = C * 10^6; % Convert capacity to bps
-perc_left = (1 - (0.19 + 0.23 + 0.17)) / ((109 - 64) + (1517 - 110));
-nMedio = (64)*0.19 + (110)*0.23 + (1518)*0.17 ...
-    + sum((65:109) * perc_left) + sum((111:1518) * perc_left); %bytes
-
-% tamanho dos pacotes voip é randi([110 130]) consideramos 120
-% taxa de chegada do tipo voip é 1 a ([16 24]) consideramos 20
-% em vez de randi tenho de fazer o 'for' com os valores todos com % igual
-size_voip = randi([110 130]); %bytes
-taxa_voip = randi([16 24])* 10^-3; %ms
-lambda_voip = 1/taxa_voip; %pps
-u_voip = 10e6/(8*size_voip); % pps -> depois dentro do for * pelos voip flows
-S_v = 1/u_voip; % Service time, S
-S2_v = 1/(u_voip^2); % S^2
-
-lambda = 1500;
-u = 10e6/(8*nMedio);
-S = 1/u; % Service time, S
-S2 = 1/(u^2); % S^2
-
 n = [10 20 30 40]; % Number of VoIP packet flows
+C = 10;
+C = C * 10^6; % Convert capacity to bps
 
-APDv = zeros(1, 4); % Initialize an array for VoIP APD
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DATA
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+perc_left = (1 - (0.19 + 0.23 + 0.17)) / ((109 - 64) + (1517 - 110));
 
 x = 64:1518;
-fprintf('Valores teóricos\n');
-for i = 1:4
-    for j = 1:length(x)
-        if x(j) == 64
-            %S(j) 
-        end
+S = zeros(4,length(x));
+S2 = zeros(4,length(x));
+
+for i = 1:length(x)
+    if x(i) == 64
+        s = (x(i) * 8) / C;
+        S(j,i) = 0.19 * s;
+        S2(j,i) = 0.19 * s^2;
+    elseif x(i) == 110
+        s = (x(i) * 8) / C;
+        S(j,i) = 0.23 * s;
+        S2(j,i) = 0.23 * s^2;        
+    elseif x(i) == 1518
+        s = (x(i) * 8) / C;
+        S(j,i) = 0.17 * s;
+        S2(j,i) = 0.17 * s^2;    
+    else
+        s = (x(i) * 8) / C;
+        S(j,i) = perc_left * s;
+        S2(j,i) = perc_left * s^2;         
     end
-        % pk = lambda_k * E[S_k]
-        pA = (lambda_voip * n(i)) * S_v;
-        wA = ((lambda_voip * S2_v + lambda * S2) / (2 * (1 - pA))) + S_v;
-        APDv(i) = wA;
-        fprintf('n=%d: w = %0.2f ms\n', n(i), wA*1e3);
 end
+ES = sum(S(j,:));
+ES2 = sum(S2(j,:));
+% Calcula mos no fim o M/G/1 with priorities
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% VOIP
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% tamanho dos pacotes voip é randi([110 130])
+% taxa de chegada do tipo voip é 1 a ([16 24])
+size_voip = sum((110:130)/21); % 120 bytes
+lambda_voip = 1/(sum((16:24)/9) * 10^-3); % 0.02 seg = 20 ms % lambda_voip = 50 pps
+u_voip = 10e6/(8*size_voip); % 9843 pps
+ES_v = 1/u_voip; % Service time, S
+ES2_v = 1/(u_voip^2); % S^2
+% A seguir calculamos o M/G/1 with priorities
+
+APDv = zeros(4, 1); % Initialize an array for VoIP APD
+APDd = zeros(4, 1); % Initialize an array for VoIP APD
+fprintf('Valores teóricos\n');
+% Percorremos os fluxos todos
+for i = 1:4
+    % pk = lambda_k * E[S_k]
+    lambda_each_flow_voip = lambda_voip * n(i);
+    pA = (lambda_each_flow_voip) * ES_v;
+    pB = lambda * ES; % para o data 
+    wA = (((lambda_each_flow_voip * ES2_v + lambda * ES2) / (2 * (1 - pA))) + ES_v) * 1e3; % segundos
+    wB = (((lambda_each_flow_voip * ES2_v + lambda * ES2) / (2 * (1 - pA)) * (1- pA -pB) ) + ES_v) * 1e3; % segundos
+    APDv(i) = wA;
+    APDd(i) = wB;
+end
+                    
+
+
