@@ -59,35 +59,21 @@ while toc(t) < timeLimit
     somador= somador+load;
 end
 
-% Calculate average Link Load
 link_load_sum = 0;
 for i=1:nLinks
     link_load_sum = link_load_sum + sum(bestLoads(i,3:4));
 end
 avgLinkLoadSol = link_load_sum/nLinks;
 
-% Calculate energy comsuption
 nodesEnergy = calculateNodeEnergy(T1,sP,bestSol);
 total_energy = nodesEnergy + bestLinkEnergy;
-
-% Calculate links not supporting any traffic flow
-linksNoTraffic = [];
-for i=1:nLinks
-    if sum(bestLoads(i,3:4)) == 0
-        linksNoTraffic = [linksNoTraffic,i];
-    end
-end
 
 fprintf('\nSERVICE 1 values:\n\n');
 fprintf('Worst link load of the (best) solution = %.2f Gbps\n',bestLoad);
 fprintf('Average link load of the solution = %.2f Gbps\n', avgLinkLoadSol);
 fprintf('Network energy comsuption of the solution = %.2f\n',total_energy);
 %fprintf('Average round-trip propagation delay of each service');
-fprintf('Number of links not supporting any traffic flow = %d\n', length(linksNoTraffic));
-fprintf('List of links not supporting any traffic flow:\n');
-for i=linksNoTraffic
-    fprintf('\t%d -> %d\n',bestLoads(i,1),bestLoads(i,2));
-end
+%fprintf('Number (and list) of links not supporting any traffic flow');
 fprintf('Number of cycles run by the algorithm = %d\n',contador);
 fprintf('Time obtained best solution= %f sec\n\n',bestTime);
 
@@ -150,8 +136,8 @@ fprintf('Network energy comsuption of the solution = %.2f\n', total_energy);
 %fprintf('Average round-trip propagation delay of each service');
 fprintf('Number of links not supporting any traffic flow = %d\n', length(linksNoTraffic));
 fprintf('List of links not supporting any traffic flow:\n');
-for i=linksNoTraffic
-    fprintf('\t%d -> %d\n',bestLoads(i,1),bestLoads(i,2));
+for i=1:length(linksNoTraffic)
+    fprintf('%d -> %d',)
 end
 fprintf('Number of cycles run by the algorithm = %d\n',contador);
 fprintf('Time obtained best solution= %f sec\n\n',bestTime);
