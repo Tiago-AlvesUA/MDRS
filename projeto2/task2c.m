@@ -1,6 +1,7 @@
-clear all
-close all
-clc
+% ----------------- Task 2 ----------------- %
+clear all;
+close all;
+clc;
 
 load('InputDataProject2.mat')
 nNodes= size(Nodes,1);
@@ -8,27 +9,10 @@ nLinks= size(Links,1);
 nFlows1= size(T1,1);
 nFlows2= size(T2,1);
 
-% Matriz D -> atraso de propagacao
-D = L/(2*10^5); % L -> Matriz com comprimento de todas ligacoes
-
-
-
-%% ex1 a)
-% Não seria a melhor solução porque estaríamos a enviar todo o tráfego por
-% um só caminho, o que causaria congestão dos pacotes, levando a maior
-% perda de pacotes e latência (Cada ligação tem uma capacidade de ligação de 
-% 100 Gbps, valor que seria ultrapassado por muito se contarmos o throughput 
-% de todos os fluxos juntos). Uma melhor solução tendo em conta a engenharia 
-% de tráfego visaria vários parâmetros de optimização, não só apenas o atraso de
-% propagação mas também a capacidade dos links, consumo de energia, etc.
-
-% rever, secalhar nao é preciso ser tao detalhado e so indicar que soma de
-% todo throughput dos fluxos ultrapassa os 100Gbps da capacidade das
-% ligaçoes
-%% ex1 b)
-
-%%% Computing up to k=2 shortest paths for all flows of service 1: %%%
-k= 2;
+% D = L/(2*10^5);
+% 2a
+% ----------------- Service 1 ----------------- %
+k= 6;
 sP= cell(1,nFlows1);
 nSP= zeros(1,nFlows1);
 for f=1:nFlows1
@@ -37,49 +21,61 @@ for f=1:nFlows1
     nSP(f)= length(totalCost);
 end
 
-t= tic;
-timeLimit= 2; % runtime limit of 60 seconds
-bestLoad= inf;
-contador= 0;
-somador= 0;
+t = tic;
+timeLimit = 60;
+bestLinkEnergy= inf;
+bestLoad = inf;
+contador = 0;
+somador = 0;
 while toc(t) < timeLimit
-    sol= zeros(1,nFlows1);
-    [sol, ~, linkEnergy] = greedyRandomized(nNodes,Links,T1,L,sP,nSP,sol);
-    
-    [sol, load, Loads, linkEnergy] = hillClimbing(sol,nNodes,Links,T1,L,sP,nSP,linkEnergy);
+    sol = zeros(1,nFlows1);
+    [sol, ~, linkEnergy] = Task2_GreedyRandomized(nNodes,Links,T1,L,sP,nSP,sol);
+    [sol, load, Loads, linkEnergy] = Task2_hillClimbing(sol,nNodes,Links,T1,L,sP,nSP,linkEnergy);
 
-    if load<bestLoad
-        bestSol= sol;
-        bestLoad= load; % Substituir por maxLoad para melhor percecao?
-        bestLoads= Loads;
+    if linkEnergy<bestLinkEnergy
+        bestSol = sol;
+        bestLoad = load;
+        bestLoads = Loads;
         bestLinkEnergy = linkEnergy;
-        bestTime= toc(t);
+        bestTime = toc(t);
     end
-    contador= contador+1;
-    somador= somador+load;
+    contador=contador+1;
+    somador=somador+load;
 end
 
+% Calculate average Link Load
 link_load_sum = 0;
 for i=1:nLinks
     link_load_sum = link_load_sum + sum(bestLoads(i,3:4));
 end
 avgLinkLoadSol = link_load_sum/nLinks;
 
+% Calculate energy comsuption
 nodesEnergy = calculateNodeEnergy(T1,sP,bestSol);
 total_energy = nodesEnergy + bestLinkEnergy;
+
+% Calculate links not supporting any traffic flow
+linksNoTraffic = [];
+for i=1:nLinks
+    if sum(bestLoads(i,3:4)) == 0
+        linksNoTraffic = [linksNoTraffic,i];
+    end
+end
 
 fprintf('\nSERVICE 1 values:\n\n');
 fprintf('Worst link load of the (best) solution = %.2f Gbps\n',bestLoad);
 fprintf('Average link load of the solution = %.2f Gbps\n', avgLinkLoadSol);
 fprintf('Network energy comsuption of the solution = %.2f\n',total_energy);
 %fprintf('Average round-trip propagation delay of each service');
-%fprintf('Number (and list) of links not supporting any traffic flow');
+fprintf('Number of links not supporting any traffic flow = %d\n', length(linksNoTraffic));
+fprintf('List of links not supporting any traffic flow:\n');
+for i=linksNoTraffic
+    fprintf('\t%d -> %d\n',bestLoads(i,1),bestLoads(i,2));
+end
 fprintf('Number of cycles run by the algorithm = %d\n',contador);
 fprintf('Time obtained best solution= %f sec\n\n',bestTime);
 
-
-%%% Computing up to k=2 shortest paths for all flows of service 2: %%%
-k= 2;
+% ----------------- Service 2 ----------------- %
 sP= cell(1,nFlows2);
 nSP= zeros(1,nFlows2);
 for f=1:nFlows2
@@ -89,33 +85,31 @@ for f=1:nFlows2
 end
 
 t= tic;
-timeLimit= 2; % runtime limit of 60 seconds
-bestLoad= inf;
+timeLimit= 60; % runtime limit of 60 seconds
+bestLinkEnergy= inf;
+bestLoad = inf;
 contador= 0;
 somador= 0;
 while toc(t) < timeLimit
     sol= zeros(1,nFlows2);
-    [sol, ~, linkEnergy] = greedyRandomized(nNodes,Links,T2,L,sP,nSP,sol);
-    
-    [sol, load, Loads, linkEnergy] = hillClimbing(sol,nNodes,Links,T2,L,sP,nSP,linkEnergy);
+    [sol, ~, linkEnergy] = Task2_GreedyRandomized(nNodes,Links,T2,L,sP,nSP,sol);
+    [sol, load, Loads, linkEnergy] = Task2_hillClimbing(sol,nNodes,Links,T2,L,sP,nSP,linkEnergy);
 
-    if load<bestLoad
+    if linkEnergy<bestLinkEnergy
         bestSol= sol;
         bestLoad= load;
         bestLoads= Loads;
         bestLinkEnergy = linkEnergy;
         bestTime= toc(t);
     end
+
     contador= contador+1;
     somador= somador+load;
 end
 
 % Calculate average Link Load
-link_load_sum = 0;
-for i=1:nLinks
-    link_load_sum = link_load_sum + sum(bestLoads(i,3:4));
-end
-avgLinkLoadSol = link_load_sum/nLinks;
+link_load_sum = sum(bestLoads(:, 3:4), 2); % Soma os TT ida e volta
+avgLinkLoadSol = mean(link_load_sum); % Calcula a média dos valores da soma para obter a média do Link Load
 
 % Calculate energy comsuption
 nodesEnergy = calculateNodeEnergy(T2,sP,bestSol);
@@ -131,16 +125,13 @@ end
 
 fprintf('\nSERVICE 2 values:\n\n');
 fprintf('Worst link load of the (best) solution = %.2f Gbps\n',bestLoad);
-fprintf('Average link load of the solution = %.2f Gbps\n', avgLinkLoadSol);
+fprintf('Average link load of the solution = %.2f Gbps\n', avgLinkLoadSol); % 44.66 Gbps
 fprintf('Network energy comsuption of the solution = %.2f\n', total_energy);
 %fprintf('Average round-trip propagation delay of each service');
 fprintf('Number of links not supporting any traffic flow = %d\n', length(linksNoTraffic));
 fprintf('List of links not supporting any traffic flow:\n');
-for i=1:length(linksNoTraffic)
-    fprintf('%d -> %d',)
+for i=linksNoTraffic
+    fprintf('\t%d -> %d\n',bestLoads(i,1),bestLoads(i,2));
 end
 fprintf('Number of cycles run by the algorithm = %d\n',contador);
 fprintf('Time obtained best solution= %f sec\n\n',bestTime);
-
-
-

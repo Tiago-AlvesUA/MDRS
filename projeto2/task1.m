@@ -1,8 +1,8 @@
-clear all
-close all
-clc
+clear all;
+close all;
+clc;
 
-load('InputDataProject2.mat')
+load('InputDataProject2.mat');
 nNodes= size(Nodes,1);
 nLinks= size(Links,1);
 nFlows1= size(T1,1);
@@ -45,9 +45,9 @@ contador= 0;
 somador= 0;
 while toc(t) < timeLimit
     sol= zeros(1,nFlows1);
-    [sol, ~, linkEnergy] = greedyRandomized(nNodes,Links,T1,L,sP,nSP,sol);
+    [sol, ~, linkEnergy] = Task1_GreedyRandomized(nNodes,Links,T1,L,sP,nSP,sol);
     
-    [sol, load, Loads, linkEnergy] = hillClimbing(sol,nNodes,Links,T1,L,sP,nSP,linkEnergy);
+    [sol, load, Loads, linkEnergy] = Task1_hillClimbing(sol,nNodes,Links,T1,L,sP,nSP,linkEnergy);
 
     if load<bestLoad
         bestSol= sol;
@@ -124,9 +124,9 @@ contador= 0;
 somador= 0;
 while toc(t) < timeLimit
     sol= zeros(1,nFlows2);
-    [sol, ~, linkEnergy] = greedyRandomized(nNodes,Links,T2,L,sP,nSP,sol);
+    [sol, ~, linkEnergy] = Task1_GreedyRandomized(nNodes,Links,T2,L,sP,nSP,sol);
     
-    [sol, load, Loads, linkEnergy] = hillClimbing(sol,nNodes,Links,T2,L,sP,nSP,linkEnergy);
+    [sol, load, Loads, linkEnergy] = Task1_hillClimbing(sol,nNodes,Links,T2,L,sP,nSP,linkEnergy);
 
     if load<bestLoad
         bestSol= sol;

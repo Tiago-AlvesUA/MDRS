@@ -1,11 +1,11 @@
-function [sol,load,Loads,linkEnergy]= hillClimbing(sol,nNodes,Links,T,L,sP,nSP,energy)
+function [sol,load,Loads,linkEnergy]= Task1_hillClimbing(sol,nNodes,Links,T,L,sP,nSP,energy)
     nFlows = size(T,1);
     Loads= calculateLinkLoads(nNodes,Links,T,L,sP,sol);
     load= max(max(Loads(:,3:4)));
     improved = true;
     linkEnergy = energy;
     while improved
-        loadBestNeigh= inf;
+        loadBestNeigh = inf;
         for flow= 1:nFlows 
             for path= 1:nSP(flow) %Rodar por todos os vizinhos possiveis
                 if sol(flow)~=path %Não trocar a sol por ela mesma

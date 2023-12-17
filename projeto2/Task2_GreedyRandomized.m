@@ -1,4 +1,6 @@
-function [sol,load,linkEnergy] = greedyRandomized(nNodes,Links,T,L,sP,nSP,sol)
+
+
+function [sol,load,linkEnergy] = Task2_GreedyRandomized(nNodes,Links,T,L,sP,nSP,sol)
     nFlows = size(T,1);
 
     for flow= randperm(nFlows) % ordem random dos fluxos
@@ -11,7 +13,7 @@ function [sol,load,linkEnergy] = greedyRandomized(nNodes,Links,T,L,sP,nSP,sol)
             [Loads,linkEnergy] = calculateLinkLoads(nNodes, Links, T,L, sP, sol);
             maxLoad = max(max(Loads(:,3:4)));
             
-            if maxLoad < best_load % se load obtida for menor a melhor obtida anteriormente, trocar
+            if linkEnergy < best_energy % se load obtida for menor a melhor obtida anteriormente, trocar
                 path_index = path;
                 best_load = maxLoad;
                 best_energy = linkEnergy;
