@@ -7,7 +7,8 @@ nNodes= size(Nodes,1);
 nLinks= size(Links,1);
 T=[T1;T2];
 nFlows= size(T,1);
-%nFlows2= size(T2,1);
+nFlows1= size(T1,1);
+nFlows2= size(T2,1);
 
 % Matriz D -> atraso de propagacao
 D = L/(2*10^5); % L -> Matriz com comprimento de todas ligacoes
@@ -52,7 +53,7 @@ while toc(t) < timeLimit
 
     if load<bestLoad
         bestSol= sol;
-        bestLoad= load; % Substituir por maxLoad para melhor percecao?
+        bestLoad= load;
         bestLoads= Loads;
         bestLinkEnergy = linkEnergy;
         bestTime= toc(t);
@@ -74,8 +75,8 @@ total_energy = nodesEnergy + bestLinkEnergy;
 
 % TODO - Do avgRoundTrip for each service separated
 % Calculate round-trip propagation delay
-roundTripDelays = zeros(1,nFlows);
-for f = 1:nFlows   
+roundTripDelays = zeros(1,nFlows1);
+for f = 1:nFlows1   
     path= sP{f}{bestSol(f)}; % Para cada fluxo vamos buscar o caminho solucao
     total_delay = 0;
     for j=2:length(path)
@@ -85,7 +86,20 @@ for f = 1:nFlows
     roundTripDelays(f) = 2*total_delay; % 2x because it's round trip delay
 end
 totalRoundTripDelay = sum(roundTripDelays);
-averageRoundTripDelay = totalRoundTripDelay / nFlows;
+averageRoundTripDelay1 = totalRoundTripDelay / nFlows1;
+
+roundTripDelays = zeros(1,nFlows2);
+for f = 13:nFlows2+12   
+    path= sP{f}{bestSol(f)}; % Para cada fluxo vamos buscar o caminho solucao
+    total_delay = 0;
+    for j=2:length(path)
+        propagation_delay = D(path(j-1), path(j)); % D matrix represents propagation delays
+        total_delay = total_delay + propagation_delay;
+    end
+    roundTripDelays(f) = 2*total_delay; % 2x because it's round trip delay
+end
+totalRoundTripDelay = sum(roundTripDelays);
+averageRoundTripDelay2 = totalRoundTripDelay / nFlows2;
 
 % Calculate links not supporting any traffic flow
 linksNoTraffic = [];
@@ -99,7 +113,8 @@ fprintf('\nSERVICE 1 values:\n\n');
 fprintf('Worst link load of the (best) solution = %.2f Gbps\n',bestLoad);
 fprintf('Average link load of the solution = %.2f Gbps\n', avgLinkLoadSol/2);
 fprintf('Network energy comsuption of the solution = %.2f\n',total_energy);
-fprintf('Average round-trip propagation delay = %f sec\n',averageRoundTripDelay);
+fprintf('Average round-trip propagation delay of service 1 = %f sec\n',averageRoundTripDelay1);
+fprintf('Average round-trip propagation delay of service 2 = %f sec\n',averageRoundTripDelay2);
 fprintf('Number of links not supporting any traffic flow = %d\n', length(linksNoTraffic));
 fprintf('List of links not supporting any traffic flow:\n');
 for i=linksNoTraffic
