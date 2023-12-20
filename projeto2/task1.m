@@ -70,10 +70,9 @@ end
 avgLinkLoadSol = link_load_sum/nLinks;
 
 % Calculate energy comsuption
-nodesEnergy = calculateNodeEnergy(T,sP,bestSol);
+nodesEnergy = calculateNodeEnergy(T,sP,nNodes,bestSol);
 total_energy = nodesEnergy + bestLinkEnergy;
 
-% TODO - Do avgRoundTrip for each service separated
 % Calculate round-trip propagation delay
 roundTripDelays = zeros(1,nFlows1);
 for f = 1:nFlows1   
@@ -109,7 +108,7 @@ for i=1:nLinks
     end
 end
 
-fprintf('\nSERVICE 1 values:\n\n');
+fprintf('\nSERVICE values:\n\n');
 fprintf('Worst link load of the (best) solution = %.2f Gbps\n',bestLoad);
 fprintf('Average link load of the solution = %.2f Gbps\n', avgLinkLoadSol/2);
 fprintf('Network energy comsuption of the solution = %.2f\n',total_energy);
