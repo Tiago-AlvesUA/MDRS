@@ -5,7 +5,7 @@ function nodesEnergy = calculateNodeEnergy(T,sP,nNodes,Solution)
     for i= 1:nFlows
         if Solution(i)>0
             path= sP{i}{Solution(i)};
-            for node=1:path
+            for node = path
                 % somar o TT para os nos todos aqui
                 nodes_TT(node) = nodes_TT(node) + sum(T(i,3:4));
             end

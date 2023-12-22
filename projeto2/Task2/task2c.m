@@ -6,6 +6,7 @@ clc;
 load('InputDataProject2.mat')
 nNodes= size(Nodes,1);
 nLinks= size(Links,1);
+T = [T1;T2];
 nFlows1= size(T1,1);
 nFlows2= size(T2,1);
 

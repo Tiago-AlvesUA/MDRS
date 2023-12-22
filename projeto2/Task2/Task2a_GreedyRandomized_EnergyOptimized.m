@@ -1,6 +1,4 @@
-
-
-function [sol,load,linkEnergy] = Task2_GreedyRandomized(nNodes,Links,T,L,sP,nSP,sol)
+function [sol,load,linkEnergy] = Task2a_GreedyRandomized_EnergyOptimized(nNodes,Links,T,L,sP,nSP,sol)
     nFlows = size(T,1);
 
     for flow= randperm(nFlows) % ordem random dos fluxos
@@ -24,4 +22,3 @@ function [sol,load,linkEnergy] = Task2_GreedyRandomized(nNodes,Links,T,L,sP,nSP,
     load = best_load;
     linkEnergy = best_energy;
 end
-

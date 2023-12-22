@@ -13,10 +13,10 @@ D = L/(2*10^5);
 %% 2a
 % ----------------- Service 1 ----------------- %
 k= 6;
-sP= cell(1,nFlows1);
-nSP= zeros(1,nFlows1);
-for f=1:nFlows1
-    [shortestPath, totalCost] = kShortestPath(L,T1(f,1),T1(f,2),k);
+sP= cell(1,nFlows);
+nSP= zeros(1,nFlows);
+for f=1:nFlows
+    [shortestPath, totalCost] = kShortestPath(L,T(f,1),T(f,2),k);
     sP{f}= shortestPath;
     nSP(f)= length(totalCost);
 end
@@ -27,9 +27,9 @@ bestLinkEnergy= inf;
 bestMinDelay = inf;
 contador = 0;
 while toc(t) < timeLimit
-    sol = zeros(1,nFlows1);
-    [sol, ~, linkEnergy] = Task3_GreedyRandomized(nNodes, Links, T1, L, sP, nSP, sol);
-    [sol, minDelay, linkEnergy] = Task3_hillClimbing(sol, nNodes, Links, T1, L, sP, nSP, linkEnergy);
+    sol = zeros(1,nFlows);
+    [sol, ~, linkEnergy] = Task3_GreedyRandomized(nNodes, Links, T, L, sP, nSP, sol);
+    [sol, minDelay, linkEnergy] = Task3_hillClimbing(sol, nNodes, Links, T, L, sP, nSP, linkEnergy);
 
     if minDelay < bestMinDelay
         bestSol = sol;
@@ -41,8 +41,9 @@ while toc(t) < timeLimit
 end
 
 % Calculate energy comsuption
-nodesEnergy = calculateNodeEnergy(T1,sP,bestSol);
+nodesEnergy = calculateNodeEnergy(T,sP,bestSol);
 total_energy = nodesEnergy + bestLinkEnergy;
+
 
 fprintf('Service 1\n');
 

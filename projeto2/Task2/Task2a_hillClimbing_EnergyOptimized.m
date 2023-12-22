@@ -1,4 +1,4 @@
-function [sol,load,Loads,linkEnergy]= Task2_hillClimbing(sol,nNodes,Links,T,L,sP,nSP,energy)
+function [sol,load,Loads,linkEnergy]= Task2a_hillClimbing_EnergyOptimized(sol,nNodes,Links,T,L,sP,nSP,energy)
     nFlows = size(T,1);
     Loads= calculateLinkLoads(nNodes,Links,T,L,sP,sol);
     load= max(max(Loads(:,3:4)));
