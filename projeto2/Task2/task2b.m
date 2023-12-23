@@ -27,29 +27,25 @@ for f=1:nFlows
 end
 
 t = tic;
-timeLimit = 60; % runtime limit of 60 seconds
+timeLimit = 5; % runtime limit of 60 seconds
 bestEnergy = inf;
 contador = 0;
 bestLoad = inf;
 somador = 0;
 while toc(t) < timeLimit
     sol = zeros(1, nFlows);
-    [sol, ~, linkEnergy] = Task2a_GreedyRandomized_EnergyOptimized(nNodes, Links, T, L, sP, nSP, sol);
-    [sol, load, Loads, linkEnergy] = Task2a_hillClimbing_EnergyOptimized(sol, nNodes, Links, T, L, sP, nSP, linkEnergy);
-    if linkEnergy < bestEnergy
+    [sol, ~, totalEnergy] = Task2a_GreedyRandomized_EnergyOptimized(nNodes, Links, T, L, sP, nSP, sol);
+    [sol, load, Loads, totalEnergy] = Task2a_hillClimbing_EnergyOptimized(sol, nNodes, Links, T, L, sP, nSP, totalEnergy);
+    if totalEnergy < bestEnergy
         bestSol = sol;
         bestLoad = load;
         bestLoads = Loads;
-        bestEnergy = linkEnergy;
+        bestEnergy = totalEnergy;
         bestTime = toc(t);
     end
     contador = contador + 1;
     somador=somador+load;
 end
-
-% Calculate energy consumption
-nodesEnergy = calculateNodeEnergy(T, sP, nNodes, bestSol);
-total_energy = nodesEnergy + bestEnergy;
 
 % Calculate round-trip propagation delay
 roundTripDelays = zeros(1,nFlows1);
@@ -101,7 +97,7 @@ linksNoTraffic = find(sum(Loads(:, 3:4), 2) == 0);
 
 fprintf('Worst link load of the solution = %.2f Gbps\n', worstLinkLoad);
 fprintf('Average link load of the solution = %.2f Gbps\n', avgLinkLoadSol);
-fprintf('Total network energy consumption of the solution = %.2f\n', total_energy);
+fprintf('Total network energy consumption of the solution = %.2f\n', bestEnergy);
 
 fprintf('Average round-trip propagation delay of service 1 = %f sec\n',averageRoundTripDelay1);
 fprintf('Average round-trip propagation delay of service 2 = %f sec\n',averageRoundTripDelay2);

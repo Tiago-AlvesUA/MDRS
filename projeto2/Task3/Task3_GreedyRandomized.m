@@ -1,32 +1,25 @@
-function [sol, minDelay,linkEnergy] = Task3_GreedyRandomized(nNodes,Links,T,L,sP,nSP,sol)
+function [sol, averageDelay, linkEnergy] = Task1_GreedyRandomized(nNodes, Links, T, D, sP, nSP, sol)
     nFlows = size(T,1);
-    minDelay = inf;
-    for flow= randperm(nFlows) % ordem random dos fluxos
-        % path_index = 0;
-        bestPath = sol(flow);
+    averageDelay = inf;
+
+    for flow= randperm(nFlows) % random order of flows
+        path_index = 0;
+        best_delay = inf;
         best_energy = inf;
-        bestPathDelay = inf;
+
         for path = 1 : nSP(flow)
             sol(flow) = path;
-            [Delays,linkEnergy] = Task3_calculateLinkLoads(nNodes, Links, T,L, sP, sol);
-            % maxLoad = max(max(Delays(:,3:4)));
-            currentDelay = calculateAverageDelay(Delays);
+            [Loads, linkEnergy, roundTripDelays] = calculateLinkLoads(nNodes, Links, T, D, sP, sol);
+            maxDelay = max(roundTripDelays);
             
-            if currentDelay < bestPathDelay % se load obtida for menor a melhor obtida anteriormente, trocar
-                bestPath = path;
-                bestPathDelay = currentDelay;
+            if maxDelay < best_delay % if delay obtained is lesser than previously obtained best, swap
+                path_index = path;
+                best_delay = maxDelay;
                 best_energy = linkEnergy;
             end
         end
-        % sol(flow) = path_index;
+        sol(flow) = path_index;
+        averageDelay = best_delay;
     end
-    sol(flow) = bestPath;
-    minDelay = bestPathDelay;
     linkEnergy = best_energy;
-end
-
-function averageDelay = calculateAverageDelay(Delays)
-    totalDelay = sum(Delays(:, 3));
-    numberOfDelays = size(Delays, 1);
-    averageDelay = totalDelay / numberOfDelays;
 end

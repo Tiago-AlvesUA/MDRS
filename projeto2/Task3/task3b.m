@@ -22,24 +22,37 @@ for f=1:nFlows
     nSP(f)= length(totalCost);
 end
 
-t = tic;
-timeLimit = 2;
-bestLinkEnergy= inf;
-bestMinDelay = inf;
-contador = 0;
-while toc(t) < timeLimit
-    sol = zeros(1,nFlows);
-    [sol, ~, linkEnergy] = Task3_GreedyRandomized(nNodes, Links, T, L, sP, nSP, sol);
-    [sol, minDelay, linkEnergy] = Task3_hillClimbing(sol, nNodes, Links, T, L, sP, nSP, linkEnergy);
+% Initialize the algorithm
+sol = zeros(1, nFlows);
+bestLoad = inf;
+bestAverageDelay = inf;
+bestLinkEnergy = inf;
+bestSolution = sol;
+bestLoads = [];
 
-    if minDelay < bestMinDelay
-        bestSol = sol;
-        bestMinDelay = minDelay;
+t = tic;
+timeLimit = 60; % Runtime limit of 60 seconds
+while toc(t) < timeLimit
+    % Call your adapted Greedy Randomized function
+    [sol, averageDelay, linkEnergy] = Task1_GreedyRandomized(nNodes, Links, T, D, sP, nSP, sol);
+    
+    % Call your adapted Hill Climbing function
+    [sol, averageDelay, Loads, linkEnergy] = Task1_hillClimbing(sol, nNodes, Links, T, D, sP, nSP, linkEnergy);
+
+    % Check if the current solution is better than the best found so far
+    if averageDelay < bestAverageDelay
+        bestSolution = sol;
+        bestAverageDelay = averageDelay;
         bestLinkEnergy = linkEnergy;
-        bestTime = toc(t);
+        bestLoads = Loads;
     end
-    contador=contador+1;
 end
+
+% Record the requested values for the best solution
+[~, ~, roundTripDelays] = calculateLinkLoads(nNodes, Links, T, D, sP, bestSolution);
+[bestAverageDelay, ~] = calculateAverageRoundTripDelay(roundTripDelays, T);
+
+fprintf('Best Average Round-Trip Delay: %f seconds\n', bestAverageDelay);
 
 % Calculate energy comsuption
 nodesEnergy = calculateNodeEnergy(T,sP,bestSol);
@@ -72,8 +85,6 @@ end
 totalRoundTripDelay = sum(roundTripDelays);
 averageRoundTripDelay2 = totalRoundTripDelay / nFlows2;
 
-
-fprintf('Service 1\n');
 
 fprintf('\nBest average round-trip delay = %.2f\n', bestMinDelay);
 fprintf('Network energy comsuption of the solution = %.2f\n',total_energy);

@@ -31,7 +31,7 @@ D = L/(2*10^5); % L -> Matriz com comprimento de todas ligacoes
 fprintf('\n1.b)\n\n');
 
 %%% Computing up to k=2 shortest paths for all flows of service 1: %%%
-k= 2;
+k= 1;
 sP= cell(1,nFlows);
 nSP= zeros(1,nFlows);
 for f=1:nFlows
@@ -41,7 +41,7 @@ for f=1:nFlows
 end
 
 t= tic;
-timeLimit= 60; % runtime limit of 60 seconds
+timeLimit= 1; % runtime limit of 60 seconds
 bestLoad= inf;
 contador= 0;
 somador= 0;
