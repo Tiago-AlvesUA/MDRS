@@ -1,9 +1,9 @@
-function [sol,load,Loads,linkEnergy]= Task2a_hillClimbing_EnergyOptimized(sol,nNodes,Links,T,L,sP,nSP,energy)
+function [sol,load,Loads,energy]= Task2a_hillClimbing_EnergyOptimized(sol,nNodes,Links,T,L,sP,nSP,energy)
     nFlows = size(T,1);
     Loads= calculateLinkLoads(nNodes,Links,T,L,sP,sol);
     load= max(max(Loads(:,3:4)));
     improved = true;
-    linkEnergy = energy;
+    %energyBestNeigh = energy;
     while improved
         energyBestNeigh = inf;
         for flow= 1:nFlows 
@@ -11,12 +11,15 @@ function [sol,load,Loads,linkEnergy]= Task2a_hillClimbing_EnergyOptimized(sol,nN
                 if sol(flow)~=path %Não trocar a sol por ela mesma
                     auxsol = sol;
                     auxsol(flow)= path;
-                    [auxLoads,auxEnergy]= calculateLinkLoads(nNodes,Links,T,L,sP,auxsol);
-                    auxload= max(max(auxLoads(:,3:4)));
-                    % check if the neighbour load is better than the
-                    % current load
+                    [auxLoads,auxLinkEnergy]= calculateLinkLoads(nNodes,Links,T,L,sP,auxsol);
+                    
+                    nodesEnergy = calculateNodeEnergy(T,sP,nNodes,sol);
+                    auxEnergy = nodesEnergy + auxLinkEnergy;
+                    
+                    % check if the neighbour energy is better than the
+                    % current one
                     if auxEnergy<energyBestNeigh
-                        loadBestNeigh= auxload;
+                        %loadBestNeigh= auxload;
                         LoadsBestNeigh= auxLoads;
                         fbest = flow;
                         pbest = path;
@@ -25,11 +28,16 @@ function [sol,load,Loads,linkEnergy]= Task2a_hillClimbing_EnergyOptimized(sol,nN
                 end
             end
         end
-        if energyBestNeigh<linkEnergy % Encontrado melhor vizinho, trocar valores
-            load= loadBestNeigh;
+        if energyBestNeigh<energy % Encontrado melhor vizinho, trocar valores
             sol(fbest)= pbest;
             Loads= LoadsBestNeigh;
-            linkEnergy = energyBestNeigh;
+            energy = energyBestNeigh;
+
+            if Loads == inf
+                load = inf;
+            else
+                load = max(max(Loads(:,3:4)));
+            end
         else
             improved = false;
         end

@@ -27,9 +27,9 @@ function [Loads,solLinkEnergy]= calculateLinkLoads(nNodes,Links,T,L,sP,Solution)
         solLinkEnergy = solLinkEnergy + energy;
     end
     
-    % If biggest link load is greater then link capacity energy is inf
-%     maxLoad = max(max(Loads(:,3:4)));
-%     if maxLoad > 100
-%         solLinkEnergy = inf;
-%     end
+    %If biggest link load is greater then link capacity energy is inf
+    maxLoad = max(max(Loads(:,3:4)));
+    if maxLoad > 100
+        solLinkEnergy = inf;
+    end
 end

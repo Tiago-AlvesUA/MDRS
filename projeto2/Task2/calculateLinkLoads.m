@@ -17,7 +17,7 @@ function [Loads,solLinkEnergy]= calculateLinkLoads(nNodes,Links,T,L,sP,Solution)
         Loads(i,3)= aux(Loads(i,1),Loads(i,2));
         Loads(i,4)= aux(Loads(i,2),Loads(i,1));
 
-        % CALCULAR ENERGIA
+        % Energy calculation
         if (Loads(i,3:4) == 0) % Link is in sleepig mode
             energy = 2;
         else
@@ -27,9 +27,9 @@ function [Loads,solLinkEnergy]= calculateLinkLoads(nNodes,Links,T,L,sP,Solution)
         solLinkEnergy = solLinkEnergy + energy;
     end
     
-    % If biggest link load is greater then link capacity energy is inf
-%     maxLoad = max(max(Loads(:,3:4)));
-%     if maxLoad > 100
-%         solLinkEnergy = inf;
-%     end
+    %If biggest link load is greater then link capacity energy is inf
+    maxLoad = max(max(Loads(:,3:4)));
+    if maxLoad > 100
+        solLinkEnergy = inf;
+    end
 end
