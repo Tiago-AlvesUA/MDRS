@@ -27,7 +27,7 @@ for f=1:nFlows
 end
 
 t = tic;
-timeLimit = 5; % runtime limit of 60 seconds
+timeLimit = 60; % runtime limit of 60 seconds
 bestEnergy = inf;
 contador = 0;
 bestLoad = inf;

@@ -16,8 +16,7 @@ function [sol,Loads,totalEnergy] = Task2a_GreedyRandomized_EnergyOptimized(nNode
             else
                 totalEnergy = inf;
             end
-            
-            if totalEnergy < best_energy % se load obtida for menor a melhor obtida anteriormente, trocar
+            if totalEnergy < best_energy
                 path_index = path;
                 bestLoads = Loads;
                 best_energy = totalEnergy;
