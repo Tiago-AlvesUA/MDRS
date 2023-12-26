@@ -1,4 +1,4 @@
-function [sol,Loads,totalEnergy] = Task2a_GreedyRandomized_EnergyOptimized(nNodes,Links,T,L,sP,nSP,sol)
+function [sol,Loads,totalEnergy] = Task4_GreedyRandomized_EnergyOptimized(nNodes,Links,T,L,sP,nSP,sol)
     nFlows = size(T,1);
 
     for flow= randperm(nFlows) % rand order of flows

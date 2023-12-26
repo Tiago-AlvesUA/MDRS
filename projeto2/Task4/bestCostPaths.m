@@ -6,8 +6,16 @@ function [sP, nSP] = bestCostPaths(nNodes, anycastNodes, L, T_anycast)
     sP= cell(1, nNodes);
     nSP= zeros(1,nNodes);
     for n = 1:nNodes
-        if ismember(n, anycastNodes)    % if is anycast node there are no SP's for it
-            nSP(n) = -1;
+        if ismember(n, anycastNodes)
+            if ismember(n, T_anycast(:,1))  
+            % if node is in anycast matrix and is
+            % anycast node, sP has source and dest
+            % as itself
+                sP{n} = {[n n]};
+                nSP(n) = 1;
+            else
+                nSP(n) = -1;
+            end
             continue;
         end
     
