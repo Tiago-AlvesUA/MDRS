@@ -8,6 +8,7 @@ function [sol,load,linkEnergy] = Task1_GreedyRandomized(nNodes,Links,T,L,sP,nSP,
 
         for path = 1 : nSP(flow)
             sol(flow) = path;
+            % fprintf('\naaaHHHHHHH sol(flow) = path; 1 %.4f', sol);
             [Loads,linkEnergy] = calculateLinkLoads(nNodes, Links, T,L, sP, sol);
             maxLoad = max(max(Loads(:,3:4)));
             

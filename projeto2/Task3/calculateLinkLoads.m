@@ -1,19 +1,14 @@
-function [Loads, solLinkEnergy, roundTripDelays] = Task3_calculateLinkLoads(nNodes, Links, T, D, sP, Solution)
+function [Loads,solLinkEnergy]= calculateLinkLoads(nNodes,Links,T,L,sP,Solution)
     nFlows = size(T,1);
     nLinks = size(Links,1);
-    aux = zeros(nNodes);
-    roundTripDelays = zeros(1, nFlows);
-
-    for i = 1:nFlows
-        if Solution(i) > 0
-            path = sP{i}{Solution(i)};
-            totalDelay = 0;
-            for j = 2:length(path)
-                aux(path(j-1), path(j)) = aux(path(j-1), path(j)) + T(i,3); 
-                aux(path(j), path(j-1)) = aux(path(j), path(j-1)) + T(i,4);
-                totalDelay = totalDelay + D(path(j-1), path(j));
+    aux= zeros(nNodes);
+    for i= 1:nFlows
+        if Solution(i)>0
+            path= sP{i}{Solution(i)};
+            for j=2:length(path)
+                aux(path(j-1),path(j))= aux(path(j-1),path(j)) + T(i,3); 
+                aux(path(j),path(j-1))= aux(path(j),path(j-1)) + T(i,4);
             end
-            roundTripDelays(i) = 2 * totalDelay; % Since it's a round-trip
         end
     end
     solLinkEnergy = 0;

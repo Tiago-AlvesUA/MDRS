@@ -1,7 +1,9 @@
-function [sol, averageDelay, Loads, linkEnergy]= Task3_hillClimbing(sol, nNodes, Links, T, D, sP, nSP, energy)
+function [sol, averageDelay, Loads, linkEnergy] = Task3_hillClimbing(sol, nNodes, Links, T, D, sP, nSP, energy)
     nFlows = size(T,1);
-    [Loads, linkEnergy, roundTripDelays] = calculateLinkLoads(nNodes, Links, T, D, sP, sol);
-    [averageDelay, ~] = calculateAverageRoundTripDelay(roundTripDelays, T);
+    [Loads, linkEnergy] = calculateLinkLoads(nNodes, Links, T, D, sP, sol);
+    [averageRoundTripDelay1, averageRoundTripDelay2] = calculateServiceDelays(sP, sol, D, nFlows1, nFlows2);
+
+    averageDelay = max(averageRoundTripDelay1, averageRoundTripDelay2);
 
     improved = true;
     linkEnergy = energy;
@@ -13,10 +15,11 @@ function [sol, averageDelay, Loads, linkEnergy]= Task3_hillClimbing(sol, nNodes,
                 if sol(flow) ~= path % Don't swap solution with itself
                     auxsol = sol;
                     auxsol(flow) = path;
-                    [auxLoads, auxEnergy, auxRoundTripDelays] = calculateLinkLoads(nNodes, Links, T, D, sP, auxsol);
-                    [auxAverageDelay, ~] = calculateAverageRoundTripDelay(auxRoundTripDelays, T);
+                    [auxLoads, auxEnergy] = calculateLinkLoads(nNodes, Links, T, D, sP, auxsol);
+                    [auxAverageRoundTripDelay1, auxAverageRoundTripDelay2] = calculateServiceDelays(sP, auxsol, D, nFlows1, nFlows2);
                     
-                    % check if the neighbor's delay is better than the current delay
+                    auxAverageDelay = max(auxAverageRoundTripDelay1, auxAverageRoundTripDelay2);
+
                     if auxAverageDelay < bestNeighDelay
                         bestNeighDelay = auxAverageDelay;
                         LoadsBestNeigh = auxLoads;
@@ -37,16 +40,3 @@ function [sol, averageDelay, Loads, linkEnergy]= Task3_hillClimbing(sol, nNodes,
         end
     end
 end
-
-function [averageDelay, roundTripDelays] = calculateAverageRoundTripDelay(roundTripDelays, T)
-    nFlows1 = size(T,1); % Adjust according to your data structure
-    nFlows2 = size(T,2); % Adjust according to your data structure
-    
-    totalDelay1 = sum(roundTripDelays(1:nFlows1));
-    totalDelay2 = sum(roundTripDelays(nFlows1+1:end));
-    averageDelay1 = totalDelay1 / nFlows1;
-    averageDelay2 = totalDelay2 / nFlows2;
-    
-    averageDelay = max(averageDelay1, averageDelay2); % Prioritize the service with the worst delay
-end
-

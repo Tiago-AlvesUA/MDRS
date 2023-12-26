@@ -1,4 +1,4 @@
-function [sol, averageDelay, linkEnergy] = Task1_GreedyRandomized(nNodes, Links, T, D, sP, nSP, sol)
+function [sol, averageDelay, linkEnergy] = Task3_GreedyRandomized(nNodes, Links, T, D, sP, nSP, sol)
     nFlows = size(T,1);
     averageDelay = inf;
 
@@ -9,9 +9,11 @@ function [sol, averageDelay, linkEnergy] = Task1_GreedyRandomized(nNodes, Links,
 
         for path = 1 : nSP(flow)
             sol(flow) = path;
-            [Loads, linkEnergy, roundTripDelays] = calculateLinkLoads(nNodes, Links, T, D, sP, sol);
-            maxDelay = max(roundTripDelays);
-            
+            [Loads, linkEnergy] = calculateLinkLoads(nNodes, Links, T, D, sP, sol);
+            [averageRoundTripDelay1, averageRoundTripDelay2] = calculateServiceDelays(sP, sol, D, nFlows1, nFlows2);
+
+            maxDelay = max(averageRoundTripDelay1, averageRoundTripDelay2);
+
             if maxDelay < best_delay % if delay obtained is lesser than previously obtained best, swap
                 path_index = path;
                 best_delay = maxDelay;

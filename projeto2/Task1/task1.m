@@ -41,7 +41,7 @@ for f=1:nFlows
 end
 
 t= tic;
-timeLimit= 60; % runtime limit of 60 seconds
+timeLimit= 10; % runtime limit of 60 seconds
 bestLoad= inf;
 contador= 0;
 somador= 0;
@@ -74,31 +74,7 @@ nodesEnergy = calculateNodeEnergy(T,sP,nNodes,bestSol);
 total_energy = nodesEnergy + bestLinkEnergy;
 
 % Calculate round-trip propagation delay
-roundTripDelays = zeros(1,nFlows1);
-for f = 1:nFlows1   
-    path= sP{f}{bestSol(f)}; % Para cada fluxo vamos buscar o caminho solucao
-    total_delay = 0;
-    for j=2:length(path)
-        propagation_delay = D(path(j-1), path(j)); % D matrix represents propagation delays
-        total_delay = total_delay + propagation_delay;
-    end
-    roundTripDelays(f) = 2*total_delay; % 2x because it's round trip delay
-end
-totalRoundTripDelay = sum(roundTripDelays);
-averageRoundTripDelay1 = totalRoundTripDelay / nFlows1;
-
-roundTripDelays = zeros(1,nFlows2);
-for f = 13:nFlows2+12   
-    path= sP{f}{bestSol(f)}; % Para cada fluxo vamos buscar o caminho solucao
-    total_delay = 0;
-    for j=2:length(path)
-        propagation_delay = D(path(j-1), path(j)); % D matrix represents propagation delays
-        total_delay = total_delay + propagation_delay;
-    end
-    roundTripDelays(f) = 2*total_delay; % 2x because it's round trip delay
-end
-totalRoundTripDelay = sum(roundTripDelays);
-averageRoundTripDelay2 = totalRoundTripDelay / nFlows2;
+[averageRoundTripDelay1, averageRoundTripDelay2] = calculateServiceDelays(sP, sol, D, nFlows1, nFlows2);
 
 % Calculate links not supporting any traffic flow
 linksNoTraffic = [];
@@ -169,31 +145,7 @@ nodesEnergy = calculateNodeEnergy(T,sP,nNodes,bestSol);
 total_energy = nodesEnergy + bestLinkEnergy;
 
 % Calculate round-trip propagation delay
-roundTripDelays = zeros(1,nFlows1);
-for f = 1:nFlows1   
-    path= sP{f}{bestSol(f)}; % Para cada fluxo vamos buscar o caminho solucao
-    total_delay = 0;
-    for j=2:length(path)
-        propagation_delay = D(path(j-1), path(j)); % D matrix represents propagation delays
-        total_delay = total_delay + propagation_delay;
-    end
-    roundTripDelays(f) = 2*total_delay; % 2x because it's round trip delay
-end
-totalRoundTripDelay = sum(roundTripDelays);
-averageRoundTripDelay1 = totalRoundTripDelay / nFlows1;
-
-roundTripDelays = zeros(1,nFlows2);
-for f = 13:nFlows2+12   
-    path= sP{f}{bestSol(f)}; % Para cada fluxo vamos buscar o caminho solucao
-    total_delay = 0;
-    for j=2:length(path)
-        propagation_delay = D(path(j-1), path(j)); % D matrix represents propagation delays
-        total_delay = total_delay + propagation_delay;
-    end
-    roundTripDelays(f) = 2*total_delay; % 2x because it's round trip delay
-end
-totalRoundTripDelay = sum(roundTripDelays);
-averageRoundTripDelay2 = totalRoundTripDelay / nFlows2;
+[averageRoundTripDelay1, averageRoundTripDelay2] = calculateServiceDelays(sP, sol, D, nFlows1, nFlows2);
 
 % Calculate links not supporting any traffic flow
 linksNoTraffic = [];
