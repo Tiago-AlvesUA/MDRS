@@ -22,16 +22,16 @@ k= 6;
 sP_Unicast= cell(1,nFlowsUnicast);
 nSP_Unicast= zeros(1,nFlowsUnicast);
 for f=1:nFlowsUnicast
-    [shortestPath, totalCost] = kShortestPath(D,T_Unicast(f,1),T_Unicast(f,2),k);
+    [shortestPath, totalCost] = kShortestPath(L,T_Unicast(f,1),T_Unicast(f,2),k);
     sP_Unicast{f}= shortestPath;
     nSP_Unicast(f)= length(totalCost);
 end
 
-[sP_Anycast,nSP_Anycast]= bestCostPaths(nNodes,anycastNodes,D,T3);
+[sP_Anycast,nSP_Anycast]= bestCostPaths(nNodes,anycastNodes,L,T3);
 
 % Add destination nodes no anycast matrix T3
 T3 = [T3(:,1) zeros(size(T3,1),1) T3(:,2:3)];
-for i= 1:size(T3,1)
+for i= 1:nFlowsAnycast
     T3(i,2) = sP_Anycast{i}{1}(end);
 end
 
@@ -40,20 +40,21 @@ T = [T_Unicast; T3];
 sP = cat(2, sP_Unicast, sP_Anycast);
 nSP = cat(2, nSP_Unicast, nSP_Anycast);
 
-nFlows = size(T,1);
+%display(T);
 
 t = tic;
-timeLimit = 1; % runtime limit of 60 seconds
+timeLimit = 60; % runtime limit of 60 seconds
 bestEnergy = inf;
 contador = 0;
-bestLoad = inf;
-somador = 0;
 while toc(t) < timeLimit
-    sol = zeros(1, nFlows);
+    [sol, Loads, totalEnergy] = Task4_GreedyRandomized_EnergyOptimized(nNodes, Links, T, L, sP, nSP);
 
-    [sol, Loads, totalEnergy] = Task4_GreedyRandomized_EnergyOptimized(nNodes, Links, T, D, sP, nSP, sol);
+    while totalEnergy == inf
+        [sol, Loads, totalEnergy] = Task4_GreedyRandomized_EnergyOptimized(nNodes, Links, T, L, sP, nSP);
+    end
 
-    [sol, load, Loads, totalEnergy] = Task4_hillClimbing_EnergyOptimized(sol, nNodes, Links, T, D, sP, nSP, totalEnergy, Loads);
+    [sol, load, Loads, totalEnergy] = Task4_hillClimbing_EnergyOptimized(sol, nNodes, Links, T, L, sP, nSP, totalEnergy, Loads);
+
     if totalEnergy < bestEnergy
         bestSol = sol;
         bestLoad = load;
@@ -62,9 +63,8 @@ while toc(t) < timeLimit
         bestTime = toc(t);
     end
     contador = contador + 1;
-    somador=somador+load;
 end
-
+% 
 % Calculate round-trip propagation delay
 roundTripDelays = zeros(1,nFlows1);
 for f = 1:nFlows1   
@@ -99,7 +99,7 @@ averageRoundTripDelay2 = totalRoundTripDelay / nFlows2;
 roundTripDelays = zeros(1,nFlowsAnycast);
 for f = 21:nFlowsAnycast+nFlowsUnicast
     if bestSol(f) ~= 0
-        path= sP{f}{bestSol(f)}; % Para cada fluxo vamos buscar o caminho solucao
+        path= sP{f}{1}; 
         total_delay = 0;
         for j=2:length(path)
             propagation_delay = D(path(j-1), path(j)); % D matrix represents propagation delays
@@ -113,14 +113,16 @@ averageRoundTripDelay3 = totalRoundTripDelay / nFlowsAnycast;
 
 
 % Calculate average Link Load
-link_load_sum = sum(Loads(:, 3)) + sum(Loads(:, 4));
-avgLinkLoadSol = link_load_sum / (2 * nLinks);
-worstLinkLoad = max(max(Loads(:, 3:4)));
+link_load_sum = 0;
+for i=1:nLinks
+    link_load_sum = link_load_sum + sum(bestLoads(i,3:4));
+end
+avgLinkLoadSol = link_load_sum / nLinks;
 
 % Calculate links not supporting any traffic flow
 linksNoTraffic = find(sum(Loads(:, 3:4), 2) == 0);
 
-fprintf('Worst link load of the solution = %.2f Gbps\n', worstLinkLoad);
+fprintf('Worst link load of the solution = %.2f Gbps\n', bestLoad);
 fprintf('Average link load of the solution = %.2f Gbps\n', avgLinkLoadSol/2);
 fprintf('Total network energy consumption of the solution = %.2f\n', bestEnergy);
 
