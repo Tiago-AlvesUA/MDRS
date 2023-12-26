@@ -1,4 +1,4 @@
-function [avgDelay1, avgDelay2] = calculateServiceDelays(sP, sol, D, nFlows1, nFlows2)
+function [worstDelay, otherDelay, worstService] = calculateServiceDelays(sP, sol, D, nFlows1, nFlows2)
     delays1 = zeros(1, nFlows1);
     delays2 = zeros(1, nFlows2);
     
@@ -25,6 +25,17 @@ function [avgDelay1, avgDelay2] = calculateServiceDelays(sP, sol, D, nFlows1, nF
         end
     end
     avgDelay2 = mean(delays2);
+
+    % Determine which service has the worst delay
+    if avgDelay1 >= avgDelay2
+        worstService = 1;
+        worstDelay = avgDelay1;
+        otherDelay = avgDelay2;
+    else 
+        worstService = 2;
+        worstDelay = avgDelay2;
+        otherDelay = avgDelay1;
+    end
 end
 
 function totalDelay = sumPathDelays(path, D)

@@ -1,39 +1,36 @@
-function [sol, averageDelay, Loads, linkEnergy] = Task3_hillClimbing(sol, nNodes, Links, T, D, sP, nSP, energy)
+function [sol,load,Loads,linkEnergy]= Task3_HillClimbing(sol,nNodes,Links,T,L,sP,nSP,energy)
     nFlows = size(T,1);
-    [Loads, linkEnergy] = calculateLinkLoads(nNodes, Links, T, D, sP, sol);
-    [averageRoundTripDelay1, averageRoundTripDelay2] = calculateServiceDelays(sP, sol, D, nFlows1, nFlows2);
-
-    averageDelay = max(averageRoundTripDelay1, averageRoundTripDelay2);
-
+    Loads= calculateLinkLoads(nNodes,Links,T,L,sP,sol);
+    load= max(max(Loads(:,3:4)));
     improved = true;
     linkEnergy = energy;
-
     while improved
-        bestNeighDelay = inf;
-        for flow = 1:nFlows 
-            for path = 1:nSP(flow) % Iterate over all possible neighbors
-                if sol(flow) ~= path % Don't swap solution with itself
+        loadBestNeigh = inf;
+        for flow= 1:nFlows 
+            for path= 1:nSP(flow) %Rodar por todos os vizinhos possiveis
+                if sol(flow)~=path %Não trocar a sol por ela mesma
                     auxsol = sol;
-                    auxsol(flow) = path;
-                    [auxLoads, auxEnergy] = calculateLinkLoads(nNodes, Links, T, D, sP, auxsol);
-                    [auxAverageRoundTripDelay1, auxAverageRoundTripDelay2] = calculateServiceDelays(sP, auxsol, D, nFlows1, nFlows2);
-                    
-                    auxAverageDelay = max(auxAverageRoundTripDelay1, auxAverageRoundTripDelay2);
-
-                    if auxAverageDelay < bestNeighDelay
-                        bestNeighDelay = auxAverageDelay;
-                        LoadsBestNeigh = auxLoads;
+                    auxsol(flow)= path;
+                    [auxLoads,auxEnergy]= calculateLinkLoads(nNodes,Links,T,L,sP,auxsol);
+                    auxload= max(max(auxLoads(:,3:4)));
+                    % check if the neighbour load is better than the
+                    % current load
+                    if auxload<loadBestNeigh
+                        loadBestNeigh= auxload;
+                        LoadsBestNeigh= auxLoads;
+                        energyBestNeigh= auxEnergy;
+                        
                         fbest = flow;
                         pbest = path;
-                        energyBestNeigh = auxEnergy;
                     end
                 end
             end
         end
-        if bestNeighDelay < averageDelay % Found a better neighbor, swap values
-            averageDelay = bestNeighDelay;
-            sol(fbest) = pbest;
-            Loads = LoadsBestNeigh;
+        if loadBestNeigh<load % Encontrado melhor vizinho, trocar valores
+            sol(fbest)= pbest;
+
+            load= loadBestNeigh;
+            Loads= LoadsBestNeigh;
             linkEnergy = energyBestNeigh;
         else
             improved = false;
