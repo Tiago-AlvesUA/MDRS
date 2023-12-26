@@ -1,5 +1,6 @@
 function [sol,Loads,totalEnergy] = Task2a_GreedyRandomized_EnergyOptimized(nNodes,Links,T,L,sP,nSP,sol)
     nFlows = size(T,1);
+    sol = zeros(1,nFlows);
 
     for flow= randperm(nFlows) % rand order of flows
         path_index = 0;
@@ -16,6 +17,7 @@ function [sol,Loads,totalEnergy] = Task2a_GreedyRandomized_EnergyOptimized(nNode
             else
                 totalEnergy = inf;
             end
+
             if totalEnergy < best_energy
                 path_index = path;
                 bestLoads = Loads;

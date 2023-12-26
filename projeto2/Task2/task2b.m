@@ -27,15 +27,20 @@ for f=1:nFlows
 end
 
 t = tic;
-timeLimit = 60; % runtime limit of 60 seconds
+timeLimit = 10; % runtime limit of 60 seconds
 bestEnergy = inf;
 contador = 0;
 bestLoad = inf;
 somador = 0;
 while toc(t) < timeLimit
-    sol = zeros(1, nFlows);
+    %sol = zeros(1, nFlows);
 
-    [sol, Loads, totalEnergy] = Task2a_GreedyRandomized_EnergyOptimized(nNodes, Links, T, L, sP, nSP, sol);
+    [sol, Loads, totalEnergy] = Task2a_GreedyRandomized_EnergyOptimized(nNodes, Links, T, L, sP, nSP);
+    
+    % First solution must have maxLoad bellow max capacity (100)
+    while totalEnergy == inf
+        [sol, Loads, totalEnergy] = Task2a_GreedyRandomized_EnergyOptimized(nNodes, Links, T, L, sP, nSP);
+    end
 
     [sol, load, Loads, totalEnergy] = Task2a_hillClimbing_EnergyOptimized(sol, nNodes, Links, T, L, sP, nSP, totalEnergy, Loads);
     if totalEnergy < bestEnergy

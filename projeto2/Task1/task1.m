@@ -27,8 +27,8 @@ D = L/(2*10^5); % L -> Matriz com comprimento de todas ligacoes
 % rever, secalhar nao é preciso ser tao detalhado e so indicar que soma de
 % todo throughput dos fluxos ultrapassa os 100Gbps da capacidade das
 % ligaçoes
-%% ex1 b)
-fprintf('\n1.b)\n\n');
+%% ex1 c)
+fprintf('\n1.c)\n\n');
 
 %%% Computing up to k=2 shortest paths for all flows of service 1: %%%
 k= 2;
@@ -41,7 +41,7 @@ for f=1:nFlows
 end
 
 t= tic;
-timeLimit= 10; % runtime limit of 60 seconds
+timeLimit= 2; % runtime limit of 60 seconds
 bestLoad= inf;
 contador= 0;
 somador= 0;
@@ -88,8 +88,8 @@ fprintf('\nSERVICE values:\n\n');
 fprintf('Worst link load of the (best) solution = %.2f Gbps\n',bestLoad);
 fprintf('Average link load of the solution = %.2f Gbps\n', avgLinkLoadSol/2);
 fprintf('Network energy comsuption of the solution = %.2f\n',total_energy);
-fprintf('Average round-trip propagation delay of service 1 = %f sec\n',averageRoundTripDelay1);
-fprintf('Average round-trip propagation delay of service 2 = %f sec\n',averageRoundTripDelay2);
+fprintf('Average round-trip propagation delay of service 1 = %.3f ms\n',averageRoundTripDelay1*1000);
+fprintf('Average round-trip propagation delay of service 2 = %.3f ms\n',averageRoundTripDelay2*1000);
 fprintf('Number of links not supporting any traffic flow = %d\n', length(linksNoTraffic));
 fprintf('List of links not supporting any traffic flow:\n');
 for i=linksNoTraffic
@@ -98,8 +98,8 @@ end
 fprintf('Number of cycles run by the algorithm = %d\n',contador);
 fprintf('Time obtained best solution= %f sec\n\n',bestTime);
 
-%% ex1 c)
-fprintf('\n1.c)\n\n');
+%% ex1 d)
+fprintf('\n1.d)\n\n');
 
 %%% Computing up to k=2 shortest paths for all flows of service 1: %%%
 k= 6;
@@ -112,7 +112,7 @@ for f=1:nFlows
 end
 
 t= tic;
-timeLimit= 60; % runtime limit of 60 seconds
+timeLimit= 1; % runtime limit of 60 seconds
 bestLoad= inf;
 contador= 0;
 somador= 0;
