@@ -13,11 +13,11 @@ nFlows = size(T, 1);
 % Matriz D -> atraso de propagacao
 D = L / (2 * 10^5); % L -> Matriz com comprimento de todas ligacoes
 
-%% 2.c) Energy Optimization
-fprintf('\n2.c) Energy Optimization\n\n');
+%% 2.b) Energy Optimization
+fprintf('\n2.b) Energy Optimization\n\n');
 
 % Computing up to k=2 shortest paths for all flows:
-k= 6;
+k= 2;
 sP= cell(1,nFlows);
 nSP= zeros(1,nFlows);
 for f=1:nFlows
@@ -67,8 +67,7 @@ for f = 1:nFlows1
         roundTripDelays(f) = 2*total_delay; % 2x because it's round trip delay
     end
 end
-totalRoundTripDelay = sum(roundTripDelays);
-averageRoundTripDelay1 = totalRoundTripDelay / nFlows1;
+averageRoundTripDelay1 = mean(roundTripDelays);
 
 roundTripDelays = zeros(1,nFlows2);
 for f = 13:nFlows2+12
@@ -82,8 +81,8 @@ for f = 13:nFlows2+12
         roundTripDelays(f) = 2*total_delay; % 2x because it's round trip delay
     end
 end
-totalRoundTripDelay = sum(roundTripDelays);
-averageRoundTripDelay2 = totalRoundTripDelay / nFlows2;
+
+averageRoundTripDelay2 = mean(roundTripDelays);
 
 % Calculate average Link Load
 link_load_sum = 0;

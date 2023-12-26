@@ -13,7 +13,7 @@ nFlows = size(T, 1);
 % Matriz D -> atraso de propagacao
 D = L / (2 * 10^5); % L -> Matriz com comprimento de todas ligacoes
 
-%% 2.a) Energy Optimization
+%% 2.b) Energy Optimization
 fprintf('\n2.b) Energy Optimization\n\n');
 
 % Computing up to k=2 shortest paths for all flows:
@@ -27,7 +27,7 @@ for f=1:nFlows
 end
 
 t = tic;
-timeLimit = 10; % runtime limit of 60 seconds
+timeLimit = 60; % runtime limit of 60 seconds
 bestEnergy = inf;
 contador = 0;
 bestLoad = inf;
@@ -67,8 +67,7 @@ for f = 1:nFlows1
         roundTripDelays(f) = 2*total_delay; % 2x because it's round trip delay
     end
 end
-totalRoundTripDelay = sum(roundTripDelays);
-averageRoundTripDelay1 = totalRoundTripDelay / nFlows1;
+averageRoundTripDelay1 = mean(roundTripDelays);
 
 roundTripDelays = zeros(1,nFlows2);
 for f = 13:nFlows2+12
@@ -82,17 +81,20 @@ for f = 13:nFlows2+12
         roundTripDelays(f) = 2*total_delay; % 2x because it's round trip delay
     end
 end
-totalRoundTripDelay = sum(roundTripDelays);
-averageRoundTripDelay2 = totalRoundTripDelay / nFlows2;
+averageRoundTripDelay2 = mean(roundTripDelays);
 
 % Calculate average Link Load
-link_load_sum = sum(Loads(:, 3)) + sum(Loads(:, 4));
-avgLinkLoadSol = link_load_sum / (2 * nLinks);
+link_load_sum = 0;
+for i=1:nLinks
+    link_load_sum = link_load_sum + sum(bestLoads(i,3:4));
+end
+avgLinkLoadSol = link_load_sum / nLinks;
 worstLinkLoad = max(max(Loads(:, 3:4)));
 
 % Calculate links not supporting any traffic flow
 linksNoTraffic = find(sum(Loads(:, 3:4), 2) == 0);
 
+fprintf('For k= %s and time=%s\n',int2str(k), int2str(timeLimit));
 fprintf('Worst link load of the solution = %.2f Gbps\n', worstLinkLoad);
 fprintf('Average link load of the solution = %.2f Gbps\n', avgLinkLoadSol/2);
 fprintf('Total network energy consumption of the solution = %.2f\n', bestEnergy);
