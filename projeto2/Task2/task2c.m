@@ -67,8 +67,7 @@ for f = 1:nFlows1
         roundTripDelays(f) = 2*total_delay; % 2x because it's round trip delay
     end
 end
-totalRoundTripDelay = sum(roundTripDelays);
-averageRoundTripDelay1 = totalRoundTripDelay / nFlows1;
+averageRoundTripDelay1 = mean(roundTripDelays);
 
 roundTripDelays = zeros(1,nFlows2);
 for f = 13:nFlows2+12
@@ -82,8 +81,7 @@ for f = 13:nFlows2+12
         roundTripDelays(f) = 2*total_delay; % 2x because it's round trip delay
     end
 end
-totalRoundTripDelay = sum(roundTripDelays);
-averageRoundTripDelay2 = totalRoundTripDelay / nFlows2;
+averageRoundTripDelay2 = mean(roundTripDelays);
 
 % Calculate average Link Load
 link_load_sum = 0;
