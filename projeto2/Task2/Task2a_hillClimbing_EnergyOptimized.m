@@ -32,11 +32,11 @@ function [sol,load,Loads,energy]= Task2a_hillClimbing_EnergyOptimized(sol,nNodes
             Loads= LoadsBestNeigh;
             energy = energyBestNeigh;
 
-            if Loads == inf
-                load = inf;
-            else
-                load = max(max(Loads(:,3:4)));
-            end
+            % if Loads == inf
+            %     load = inf;
+            % else
+            %     load = max(max(Loads(:,3:4)));
+            % end
         else
             improved = false;
         end

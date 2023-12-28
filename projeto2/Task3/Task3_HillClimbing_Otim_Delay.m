@@ -1,6 +1,7 @@
 function [sol, load,Loads,linkEnergy, delay]= Task3_HillClimbing_Otim_Delay(sol, nNodes,Links,T,D,sP,nSP,L,nFlows1,linkEnergy)
     nFlows = size(T,1);
-        
+    
+
     T1_idx = 1:nFlows1;
     T2_idx = 1+nFlows1:nFlows;
 
@@ -24,10 +25,19 @@ function [sol, load,Loads,linkEnergy, delay]= Task3_HillClimbing_Otim_Delay(sol,
                     
                     % delay of this sol
                     auxDelay = calculateServiceDelays(sP, auxsol, D, T);
+                    if mean(auxDelay(T1_idx)) > mean(auxDelay(T2_idx))
+                        auxDelayWorst = auxDelay(T1_idx);
+                        auxDelayOther = auxDelay(T2_idx);
+                    else
+                        auxDelayOther = auxDelay(T1_idx);
+                        auxDelayWorst = auxDelay(T2_idx);
+                    end
 
-                    % 0.5 * T2, porque T1 é mais obrigatoria
-                    valueAuxDelay = (sum(auxDelay(T1_idx)) + 0.5 * sum(auxDelay(T2_idx)))/20;
-                    valueBestDelay = (sum(bestDelay(T1_idx)) + 0.5 * sum(bestDelay(T2_idx)))/20;
+                    % 0.5 * other, porque worst é mais obrigatoria
+                    auxDelayLowPriority = 0.5 * sum(auxDelayOther);
+                    auxDelayHighPriority = sum(auxDelayWorst);
+                    valueAuxDelay = (auxDelayHighPriority + auxDelayLowPriority)/20;
+                    valueBestDelay = (auxDelayHighPriority + auxDelayLowPriority)/20;
 
                     if valueAuxDelay < valueBestDelay
                         loadBestNeigh = auxload;
