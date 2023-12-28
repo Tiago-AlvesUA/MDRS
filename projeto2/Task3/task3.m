@@ -32,23 +32,24 @@ timeLimit= 2; % runtime limit of 60 seconds
 bestLoad = inf;
 bestLoads = inf;
 bestLinkEnergy = inf;
+bestDelay= inf;
 Loads = inf;
-
 
 contador= 0;
 somador= 0;
 while toc(t) < timeLimit
     % sol = zeros(1,nFlows);
     
-    [sol, Loads, linkEnergy] = Task3_GreedyRandomized_Otim_Delay(nNodes,Links,T,L,sP,nSP);
+    [sol, ~, linkEnergy] = Task3_GreedyRandomized_Otim_Delay(nNodes,Links,T,L,sP,nSP);
     while linkEnergy == inf
-        [sol, Loads, linkEnergy] = Task3_GreedyRandomized_Otim_Delay(nNodes,Links,T,L,sP,nSP);
+        [sol, ~, linkEnergy] = Task3_GreedyRandomized_Otim_Delay(nNodes,Links,T,L,sP,nSP);
     end
 
-    [sol, load] = Task3_HillClimbing_Otim_Delay(sol,nNodes,Links,T,D,sP,nSP,L,nFlows1);
+    [sol, load, Loads, linkEnergy, delay] = Task3_HillClimbing_Otim_Delay(sol,nNodes,Links,T,D,sP,nSP,L,nFlows1,linkEnergy);
     
-     if load < bestLoad
+     if delay < bestDelay
         bestSol= sol;
+        bestDelay = delay;
         bestLoad= load;
         bestLoads=Loads;
         bestLinkEnergy = linkEnergy;

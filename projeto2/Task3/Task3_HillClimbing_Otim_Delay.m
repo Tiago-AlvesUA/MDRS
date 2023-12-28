@@ -1,36 +1,36 @@
-function [sol, load]= Task3_HillClimbing_Otim_Delay(sol, nNodes, ...
-    Links,T,D,sP,nSP,L,nFlows1)
+function [sol, load,Loads,linkEnergy, delay]= Task3_HillClimbing_Otim_Delay(sol, nNodes,Links,T,D,sP,nSP,L,nFlows1,linkEnergy)
     nFlows = size(T,1);
         
     T1_idx = 1:nFlows1;
     T2_idx = 1+nFlows1:nFlows;
 
-    energyBestNeigh = inf;
-    LoadsBestNeigh = inf;
+    Loads= calculateLinkLoads(nNodes,Links,T,L,sP,sol);
+    load= max(max(Loads(:,3:4)));
+
+    % delay calculado com sol do greedy, de todos os fluxos/serviços
     bestDelay = calculateServiceDelays(sP, sol, D, T);
-    % disp(['auxDelay: ', bestDelay]);
-    bestSol = sol;    
-    
+    delay = (sum(calculateServiceDelays(sP, sol, D, T)))/20;
+    %display(delay);
     improved = true;
     while improved
+        loadBestNeigh = inf;
         for flow= 1:nFlows 
             for path= 1:nSP(flow) %Rodar por todos os vizinhos possiveis
                 if sol(flow)~=path %Não trocar a sol por ela mesma
                     auxsol = sol;
                     auxsol(flow)= path;
                     [auxLoads,auxLinkEnergy]= calculateLinkLoads(nNodes,Links,T,L,sP,auxsol);
+                    auxload= max(max(auxLoads(:,3:4)));
+                    
                     % delay of this sol
                     auxDelay = calculateServiceDelays(sP, auxsol, D, T);
-                    %priorities
-                    % disp(['auxDelay: ', auxDelay]);
-                    % disp(['Size of auxDelay: ', num2str(length(auxDelay))]);
-                    % disp(['T1_idx range: ', num2str(min(T1_idx)), ' - ', num2str(max(T1_idx))]);
-                    % disp(['T2_idx range: ', num2str(min(T2_idx)), ' - ', num2str(max(T2_idx))]);
 
-                    p_auxRoundTripDelay = sum(auxDelay(T1_idx)) + 0.5 * sum(auxDelay(T2_idx));
-                    p_bestRoundTripDelay = sum(auxDelay(T1_idx)) + 0.5 * sum(auxDelay(T2_idx));
-                    
-                    if p_auxRoundTripDelay < p_bestRoundTripDelay
+                    % 0.5 * T2, porque T1 é mais obrigatoria
+                    valueAuxDelay = (sum(auxDelay(T1_idx)) + 0.5 * sum(auxDelay(T2_idx)))/20;
+                    valueBestDelay = (sum(bestDelay(T1_idx)) + 0.5 * sum(bestDelay(T2_idx)))/20;
+
+                    if valueAuxDelay < valueBestDelay
+                        loadBestNeigh = auxload;
                         energyBestNeigh = auxLinkEnergy;
                         LoadsBestNeigh = auxLoads;
                         bestSol = auxsol;
@@ -39,17 +39,18 @@ function [sol, load]= Task3_HillClimbing_Otim_Delay(sol, nNodes, ...
                 end
             end
         end
-        if max(bestDelay(T1_idx)) < calculateServiceDelays(sP, sol, D, T) % Encontrado melhor vizinho, trocar valores
-            % delay = bestDelay;
-            % energy = energyBestNeigh;
-            % Loads = LoadsBestNeigh;
+        if max(bestDelay(T1_idx)) < delay % Encontrado melhor vizinho, trocar valores
+            load = loadBestNeigh;
+            Loads = LoadsBestNeigh;
+            linkEnergy = energyBestNeigh;
             sol = bestSol;
-            load = max(bestDelay(T1_idx));
-            if Loads == inf
-                load = inf;
-            end
+            delay = max(bestNeighDelay(T1_idx));
+            
+            
+%             if Loads == inf
+%                 load = inf;
+%             end
         else
-            load = max(calculateServiceDelays(sP, sol, D, T));
             improved = false;
         end
     end

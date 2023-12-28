@@ -1,38 +1,25 @@
-function [sol,Loads,totalEnergy] = Task3_GreedyRandomized_Otim_Delay(nNodes,Links,T,L,sP,nSP)
-%   Tirar o sol do input que n ta a fazer nd 
+function [sol,load,linkEnergy] = Task3_GreedyRandomized_Otim_Delay(nNodes,Links,T,L,sP,nSP)
     nFlows = size(T,1);
     sol = zeros(1,nFlows);
-
-    for flow= randperm(nFlows) % rand order of flows
+    for flow= randperm(nFlows) % ordem random dos fluxos
         path_index = 0;
-        bestLoads = inf;
+        best_load = inf;
         best_energy = inf;
 
         for path = 1 : nSP(flow)
             sol(flow) = path;
+            % fprintf('\naaaHHHHHHH sol(flow) = path; 1 %.4f', sol);
             [Loads,linkEnergy] = calculateLinkLoads(nNodes, Links, T,L, sP, sol);
-            % now we also need to take into account nodes energy
-            if linkEnergy < inf
-                nodesEnergy = calculateNodeEnergy(T,sP,nNodes,sol);
-                totalEnergy = nodesEnergy + linkEnergy;
-            else
-                totalEnergy = inf;
-            end
-
-            if totalEnergy < best_energy
+            maxLoad = max(max(Loads(:,3:4)));
+            
+            if maxLoad < best_load % se load obtida for menor a melhor obtida anteriormente, trocar
                 path_index = path;
-                bestLoads = Loads;
-                best_energy = totalEnergy;
+                best_load = maxLoad;
+                best_energy = linkEnergy;
             end
         end
-
-        if path_index > 0
-            sol(flow) = path_index;
-        else
-            totalEnergy = inf;
-            break;
-        end
+        sol(flow) = path_index;
     end
-    Loads = bestLoads;
-    totalEnergy = best_energy;
+    load = best_load;
+    linkEnergy = best_energy;
 end
