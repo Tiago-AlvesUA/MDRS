@@ -7,8 +7,7 @@ function [sol, load]= Task3_HillClimbing_Otim_Delay(sol, nNodes, ...
 
     energyBestNeigh = inf;
     LoadsBestNeigh = inf;
-    bestDelay = calculateServiceDelays(sP, sol, D, T);
-    % disp(['auxDelay: ', bestDelay]);
+    bestDelay = calculateLinkLoads(nNodes,Links,T,L,sP,sol);
     bestSol = sol;    
     
     improved = true;
@@ -20,13 +19,8 @@ function [sol, load]= Task3_HillClimbing_Otim_Delay(sol, nNodes, ...
                     auxsol(flow)= path;
                     [auxLoads,auxLinkEnergy]= calculateLinkLoads(nNodes,Links,T,L,sP,auxsol);
                     % delay of this sol
-                    auxDelay = calculateServiceDelays(sP, auxsol, D, T);
+                    auxDelay = calculateServiceDelays(sP, auxsol, D,T);
                     %priorities
-                    % disp(['auxDelay: ', auxDelay]);
-                    % disp(['Size of auxDelay: ', num2str(length(auxDelay))]);
-                    % disp(['T1_idx range: ', num2str(min(T1_idx)), ' - ', num2str(max(T1_idx))]);
-                    % disp(['T2_idx range: ', num2str(min(T2_idx)), ' - ', num2str(max(T2_idx))]);
-
                     p_auxRoundTripDelay = sum(auxDelay(T1_idx)) + 0.5 * sum(auxDelay(T2_idx));
                     p_bestRoundTripDelay = sum(auxDelay(T1_idx)) + 0.5 * sum(auxDelay(T2_idx));
                     
@@ -39,17 +33,17 @@ function [sol, load]= Task3_HillClimbing_Otim_Delay(sol, nNodes, ...
                 end
             end
         end
-        if max(bestDelay(T1_idx)) < calculateServiceDelays(sP, sol, D, T) % Encontrado melhor vizinho, trocar valores
+        if max(bestDelay(T1_idx)) < calculateServiceDelays(sP, sol, D,T) % Encontrado melhor vizinho, trocar valores
             % delay = bestDelay;
             % energy = energyBestNeigh;
             % Loads = LoadsBestNeigh;
             sol = bestSol;
             load = max(bestDelay(T1_idx));
-            if Loads == inf
-                load = inf;
-            end
+            % if Loads == inf
+            %     load = inf;
+            % end
         else
-            load = max(calculateServiceDelays(sP, sol, D, T));
+            load = max(calculateServiceDelays(sP, sol, D,T));
             improved = false;
         end
     end

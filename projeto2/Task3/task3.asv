@@ -24,11 +24,11 @@ fprintf('\n3.a)\n\n');
 
 %%% Computing up to k=2 shortest paths for all flows of service 1: %%%
 % Compute up to n paths for each flow:
-k = 2;
+k = 1;
 [sP, nSP]= calculatePaths(L,T,k, nFlows);
 
 t= tic;
-timeLimit= 2; % runtime limit of 60 seconds
+timeLimit= 1; % runtime limit of 60 seconds
 bestLoad = inf;
 bestLoads = inf;
 bestLinkEnergy = inf;
@@ -38,20 +38,17 @@ Loads = inf;
 contador= 0;
 somador= 0;
 while toc(t) < timeLimit
-    % sol = zeros(1,nFlows);
+    sol = zeros(1,nFlows);
+        
+    [sol,load, Loads] = Task3_GreedyRandomized_Otim_Delay(nNodes,Links,T,L,D,sP,nSP,sol,nFlows1)
     
-    [sol, Loads, linkEnergy] = Task3_GreedyRandomized_Otim_Delay(nNodes,Links,T,L,sP,nSP);
-    while linkEnergy == inf
-        [sol, Loads, linkEnergy] = Task3_GreedyRandomized_Otim_Delay(nNodes,Links,T,L,sP,nSP);
-    end
-
     [sol, load] = Task3_HillClimbing_Otim_Delay(sol,nNodes,Links,T,D,sP,nSP,L,nFlows1);
     
      if load < bestLoad
         bestSol= sol;
         bestLoad= load;
         bestLoads=Loads;
-        bestLinkEnergy = linkEnergy;
+        % bestLinkEnergy = linkEnergy;
         bestTime= toc(t);
     end
     contador= contador+1;
@@ -69,34 +66,12 @@ avgLinkLoadSol = link_load_sum/nLinks;
 nodesEnergy = calculateNodeEnergy(T,sP,nNodes,bestSol);
 total_energy = nodesEnergy + bestLinkEnergy;
 
+T1_idx = 1:nFlows1;
+T2_idx = 1+nFlows1:nFlows;
 % Calculate round-trip propagation delay
-roundTripDelays = zeros(1,nFlows1);
-for f = 1:nFlows1   
-    if bestSol(f) ~= 0
-        path= sP{f}{bestSol(f)}; % Para cada fluxo vamos buscar o caminho solucao
-        total_delay = 0;
-        for j=2:length(path)
-            propagation_delay = D(path(j-1), path(j)); % D matrix represents propagation delays
-            total_delay = total_delay + propagation_delay;
-        end
-        roundTripDelays(f) = 2*total_delay; % 2x because it's round trip delay
-    end
-end
-averageRoundTripDelay1 = mean(roundTripDelays);
-
-roundTripDelays = zeros(1,nFlows2);
-for f = 13:nFlows2+12
-    if bestSol(f) ~= 0
-        path= sP{f}{bestSol(f)}; % Para cada fluxo vamos buscar o caminho solucao
-        total_delay = 0;
-        for j=2:length(path)
-            propagation_delay = D(path(j-1), path(j)); % D matrix represents propagation delays
-            total_delay = total_delay + propagation_delay;
-        end
-        roundTripDelays(f) = 2*total_delay; % 2x because it's round trip delay
-    end
-end
-averageRoundTripDelay2 = mean(roundTripDelays);
+serviceDelay=calculateServiceDelays(sP,bestSol,D,T);
+fprintf('Average round-trip propagation delay of worstService = %f ms\n',serviceDelay(T1_idx)*1000);
+fprintf('Average round-trip propagation delay of otherService = %f ms\n',serviceDelay(T2_idx)*1000);
 
 % Calculate links not supporting any traffic flow
 linksNoTraffic = [];
@@ -110,8 +85,9 @@ fprintf('For k= %s and time=%s\n',int2str(k), int2str(timeLimit));
 fprintf('Worst link load of the (best) solution = %.2f Gbps\n',bestLoad);
 fprintf('Average link load of the solution = %.2f Gbps\n', avgLinkLoadSol/2);
 fprintf('Network energy comsuption of the solution = %.2f\n',total_energy);
-fprintf('Average round-trip propagation delay of service 1 = %f sec\n',averageRoundTripDelay1);
-fprintf('Average round-trip propagation delay of service 2 = %f sec\n',averageRoundTripDelay2);
+% fprintf('The WorstService was T%s\n',int2str(worstService));
+fprintf('Average round-trip propagation delay of worstService = %.4f ms\n',bestWorstDelay*1000);
+fprintf('Average round-trip propagation delay of otherService = %.4f ms\n',bestOtherDelay*1000);
 fprintf('Number of links not supporting any traffic flow = %d\n', length(linksNoTraffic));
 fprintf('List of links not supporting any traffic flow:\n');
 for i=linksNoTraffic

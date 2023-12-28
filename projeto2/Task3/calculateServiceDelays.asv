@@ -1,0 +1,30 @@
+function [worstDelay, otherDelay, worstService] = calculateServiceDelays(sP, bestSol, D, nFlows)
+    % Calculate round-trip propagation delay
+    roundTripDelays1 = zeros(1,nFlows);
+
+    for f = 1:nFlows 
+        if bestSol(f) ~= 0
+            path= sP{f}{bestSol(f)}; % Para cada fluxo vamos buscar o caminho solucao
+            total_delay = 0;
+            for j=2:length(path)
+                propagation_delay = D(path(j-1), path(j)); % D matrix represents propagation delays
+                total_delay = total_delay + propagation_delay;
+            end
+            roundTripDelays1(f) = 2*total_delay; % 2x because it's round trip delay
+        end
+    end
+
+    averageRoundTripDelay1 = mean(roundTripDelays1);
+    averageRoundTripDelay2 = mean(roundTripDelays2);
+    
+        % Determine which service has the worst delay
+        if averageRoundTripDelay1 >= averageRoundTripDelay2
+            worstService = 1;
+            worstDelay = averageRoundTripDelay1;
+            otherDelay = averageRoundTripDelay2;
+        else 
+            worstService = 2;
+            worstDelay = averageRoundTripDelay2;
+            otherDelay = averageRoundTripDelay1;
+        end
+end

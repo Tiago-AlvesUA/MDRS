@@ -1,39 +1,38 @@
-function [sol,worstDelay,otherDelay,load,linkEnergy] = Task3_GreedyRandomized_Otim_Delay(worst, nNodes,Links,T, ...
-    D,sP,nSP,sol, nFlowsX, L)
+function [sol,Loads,totalEnergy] = Task3_GreedyRandomized_Otim_Delay(nNodes,Links,T,L,sP,nSP)
+%   Tirar o sol do input que n ta a fazer nd 
     nFlows = size(T,1);
+    sol = zeros(1,nFlows);
 
-    for flow= randperm(nFlows) % ordem random dos fluxos
+    for flow= randperm(nFlows) % rand order of flows
         path_index = 0;
-        bestWorstDelay = inf;
-        bestOtherDelay = inf;
+        bestLoads = inf;
+        best_energy = inf;
+
         for path = 1 : nSP(flow)
             sol(flow) = path;
-            % fprintf('\naaaHHHHHHH sol(flow) = path; 1 %.4f', sol(flow));
-            [worstDelay, otherDelay, ~] = calculateServiceDelays(sP, sol, D, nFlowsX, nFlows - nFlowsX);
-
             [Loads,linkEnergy] = calculateLinkLoads(nNodes, Links, T,L, sP, sol);
-            maxLoad = max(max(Loads(:,3:4)));
-
-            if worstDelay < bestWorstDelay && worst
-                path_index = path;
-                best_load = maxLoad;
-                best_energy = linkEnergy;
-
-                bestWorstDelay = worstDelay;
+            % now we also need to take into account nodes energy
+            if linkEnergy < inf
+                nodesEnergy = calculateNodeEnergy(T,sP,nNodes,sol);
+                totalEnergy = nodesEnergy + linkEnergy;
+            else
+                totalEnergy = inf;
             end
-            if otherDelay < bestOtherDelay && ~worst
-                path_index = path;
-                best_load = maxLoad;
-                best_energy = linkEnergy;
 
-                bestOtherDelay = otherDelay;
+            if totalEnergy < best_energy
+                path_index = path;
+                bestLoads = Loads;
+                best_energy = totalEnergy;
             end
         end
-        sol(flow) = path_index;
-    end
-    load = best_load;
-    linkEnergy = best_energy;
 
-    worstDelay = bestWorstDelay;
-    otherDelay = bestOtherDelay;
+        if path_index > 0
+            sol(flow) = path_index;
+        else
+            totalEnergy = inf;
+            break;
+        end
+    end
+    Loads = bestLoads;
+    totalEnergy = best_energy;
 end
