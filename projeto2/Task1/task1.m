@@ -14,7 +14,7 @@ nFlows2= size(T2,1);
 D = L/(2*10^5); % L -> Matriz com comprimento de todas ligacoes
 
 
-%% ex1 c)
+%% ex1 c)/ d)
 fprintf('\n1.c)\n\n');
 
 %%% Computing up to k=2 or k=6 shortest paths for all flows of service 1: %%%
