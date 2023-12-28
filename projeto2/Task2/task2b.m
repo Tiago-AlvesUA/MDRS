@@ -14,10 +14,10 @@ nFlows = size(T, 1);
 D = L / (2 * 10^5); % L -> Matriz com comprimento de todas ligacoes
 
 %% 2.b) Energy Optimization
-fprintf('\n2.c) Energy Optimization\n\n');
+fprintf('\n2.b) Energy Optimization\n\n');
 
 % Computing up to k=2 shortest paths for all flows:
-k= 6;
+k= 2;
 sP= cell(1,nFlows);
 nSP= zeros(1,nFlows);
 for f=1:nFlows

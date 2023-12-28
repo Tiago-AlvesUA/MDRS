@@ -13,7 +13,7 @@ nFlows = size(T, 1);
 % Matriz D -> atraso de propagacao
 D = L / (2 * 10^5); % L -> Matriz com comprimento de todas ligacoes
 
-%% 2.b) Energy Optimization
+%% 2.c) Energy Optimization
 fprintf('\n2.c) Energy Optimization\n\n');
 
 % Computing up to k=2 shortest paths for all flows:
